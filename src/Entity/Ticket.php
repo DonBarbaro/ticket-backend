@@ -13,13 +13,17 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Doctrine\UuidType;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ApiResource]
 class Ticket
 {
+    /**
+     * @var \Ramsey\Uuid\UuidInterface
+     */
     #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private string $id;
 

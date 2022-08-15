@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Ramsey\Uuid\Doctrine\UuidType;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -20,8 +22,11 @@ use Ramsey\Uuid\UuidInterface;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    /**
+     * @var \Ramsey\Uuid\UuidInterface
+     */
     #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private string $id;
 
@@ -80,6 +85,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUsername(): string
     {
         return (string) $this->id;
+    }
+
+    public function setUserName(string $userName): self
+    {
+        $this->userName = $userName;
+
+        return $this;
     }
 
     /**
@@ -148,7 +160,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
-            $ticket->addAssigne($this);
+            $ticket->addAssign($this);
         }
 
         return $this;
@@ -157,18 +169,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeTicket(Ticket $ticket): self
     {
         if ($this->tickets->removeElement($ticket)) {
-            $ticket->removeAssigne($this);
+            $ticket->removeAssign($this);
         }
 
         return $this;
     }
-
-
-    public function setUserName(string $userName): self
-    {
-        $this->userName = $userName;
-
-        return $this;
-    }
-
 }

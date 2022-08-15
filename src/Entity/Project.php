@@ -8,6 +8,7 @@ use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -15,8 +16,11 @@ use Ramsey\Uuid\UuidInterface;
 #[ApiResource]
 class Project
 {
+    /**
+     * @var \Ramsey\Uuid\UuidInterface
+     */
     #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private string $id;
 
