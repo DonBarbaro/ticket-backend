@@ -20,10 +20,6 @@ use Ramsey\Uuid\UuidInterface;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
-    #[ApiProperty(identifier: true)]
-    private string $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $userName;
@@ -44,9 +40,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tickets;
 
 
-    public function __construct(UuidInterface $id = null)
+    public function __construct()
     {
-        $this->id = Uuid::uuid4();
         $this->tickets = new ArrayCollection();
     }
 

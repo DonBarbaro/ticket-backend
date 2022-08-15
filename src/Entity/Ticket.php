@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Attributes\Identified;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
 use App\Enums\StatusEnum;
@@ -18,10 +19,7 @@ use Ramsey\Uuid\UuidInterface;
 #[ApiResource]
 class Ticket
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
-    #[ApiProperty(identifier: true)]
-    private string $id;
+    use Identified;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $firstName;
@@ -57,17 +55,10 @@ class Ticket
     private \DateTimeInterface $createdAt;
 
 
-    public function __construct(UuidInterface $id = null)
+    public function __construct( )
     {
-        $this->id = Uuid::uuid4();
         $this->assign = new ArrayCollection();
     }
-
-    public function getId(): UuidInterface
-    {
-        return $this->id;
-    }
-
 
     public function getFirstName(): ?string
     {

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Attributes\Identified;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -15,10 +16,8 @@ use Ramsey\Uuid\UuidInterface;
 #[ApiResource]
 class Project
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
-    #[ApiProperty(identifier: true)]
-    private string $id;
+
+    use Identified;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
@@ -29,15 +28,9 @@ class Project
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
     private Collection $projectAssign;
 
-    public function __construct(UuidInterface $id = null)
+    public function __construct()
     {
-        $this->id = Uuid::uuid4();
         $this->projectAssign = new ArrayCollection();
-    }
-
-    public function getId(): UuidInterface
-    {
-        return $this->id;
     }
 
 
