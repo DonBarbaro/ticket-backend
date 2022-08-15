@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Dto\LoginInputDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,7 +18,16 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
-
+    collectionOperations: [
+        'login' => [
+            'method' => 'POST',
+            'path' => '/auth/login',
+            'input' => LoginInputDto::class,
+            'normalization_context' => ['groups' => 'user:read'],
+            'controller' => PlaceholderAction::class,
+        ]
+    ],
+    itemOperations: [],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
