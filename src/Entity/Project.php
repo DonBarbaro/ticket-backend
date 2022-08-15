@@ -19,7 +19,7 @@ class Project
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ApiProperty(identifier: true)]
-    private string $id;
+    private UuidInterface $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
