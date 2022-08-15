@@ -8,6 +8,7 @@ use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -16,9 +17,9 @@ use Ramsey\Uuid\UuidInterface;
 class Project
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ApiProperty(identifier: true)]
-    private string $id;
+    private UuidInterface $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $name;
@@ -31,7 +32,7 @@ class Project
 
     public function __construct(UuidInterface $id = null)
     {
-        $this->id = Uuid::uuid4();
+        $this->id= $id ?: Uuid::uuid4();
         $this->projectAssign = new ArrayCollection();
     }
 
@@ -39,7 +40,6 @@ class Project
     {
         return $this->id;
     }
-
 
     public function getName(): ?string
     {

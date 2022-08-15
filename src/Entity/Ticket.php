@@ -19,9 +19,9 @@ use Ramsey\Uuid\UuidInterface;
 class Ticket
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: "uuid", unique: true)]
     #[ApiProperty(identifier: true)]
-    private string $id;
+    private UuidInterface $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $firstName;
@@ -56,10 +56,9 @@ class Ticket
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
-
     public function __construct(UuidInterface $id = null)
     {
-        $this->id = Uuid::uuid4();
+        $this->id= $id ?: Uuid::uuid4();
         $this->assign = new ArrayCollection();
     }
 

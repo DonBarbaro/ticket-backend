@@ -21,9 +21,9 @@ use Ramsey\Uuid\UuidInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'string', unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ApiProperty(identifier: true)]
-    private string $id;
+    private UuidInterface $id;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $userName;
@@ -46,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct(UuidInterface $id = null)
     {
-        $this->id = Uuid::uuid4();
+        $this->id= $id ?: Uuid::uuid4();
         $this->tickets = new ArrayCollection();
     }
 
@@ -80,6 +80,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUsername(): string
     {
         return (string) $this->id;
+    }
+
+    public function setUserName(string $userName): self
+    {
+        $this->userName = $userName;
+
+        return $this;
     }
 
     /**
@@ -148,7 +155,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->tickets->contains($ticket)) {
             $this->tickets->add($ticket);
-            $ticket->addAssigne($this);
+            $ticket->addAssign($this);
         }
 
         return $this;
@@ -157,18 +164,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeTicket(Ticket $ticket): self
     {
         if ($this->tickets->removeElement($ticket)) {
-            $ticket->removeAssigne($this);
+            $ticket->removeAssign($this);
         }
 
         return $this;
     }
-
-
-    public function setUserName(string $userName): self
-    {
-        $this->userName = $userName;
-
-        return $this;
-    }
-
 }
