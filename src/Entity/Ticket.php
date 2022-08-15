@@ -13,17 +13,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Ramsey\Uuid\Doctrine\UuidType;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ApiResource]
 class Ticket
 {
-    /**
-     * @var \Ramsey\Uuid\UuidInterface
-     */
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: "uuid", unique: true)]
     #[ApiProperty(identifier: true)]
     private string $id;
 
@@ -60,10 +56,9 @@ class Ticket
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
-
     public function __construct(UuidInterface $id = null)
     {
-        $this->id = Uuid::uuid4();
+        $this->id= $id ?: Uuid::uuid4();
         $this->assign = new ArrayCollection();
     }
 

@@ -16,11 +16,8 @@ use Ramsey\Uuid\UuidInterface;
 #[ApiResource]
 class Project
 {
-    /**
-     * @var \Ramsey\Uuid\UuidInterface
-     */
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
     #[ApiProperty(identifier: true)]
     private string $id;
 
@@ -35,7 +32,7 @@ class Project
 
     public function __construct(UuidInterface $id = null)
     {
-        $this->id = Uuid::uuid4();
+        $this->id= $id ?: Uuid::uuid4();
         $this->projectAssign = new ArrayCollection();
     }
 
@@ -43,7 +40,6 @@ class Project
     {
         return $this->id;
     }
-
 
     public function getName(): ?string
     {
