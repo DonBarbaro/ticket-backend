@@ -10,7 +10,9 @@ use App\Enums\StatusEnum;
 use App\Repository\TicketRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -19,35 +21,35 @@ use Ramsey\Uuid\UuidInterface;
 class Ticket
 {
     #[ORM\Id]
-    #[ORM\Column(type: "uuid", unique: true)]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private UuidInterface $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $firstName;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $lastName;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $email;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $phone;
 
-    #[ORM\Column(type: 'string', length: 255, enumType: ProblemTypeEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, enumType: ProblemTypeEnum::class)]
     private string $problemType;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $message;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
     private Collection $assign;
 
-    #[ORM\Column(type: 'string', length: 255, enumType: SourceEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, enumType: SourceEnum::class)]
     private string $source;
 
-    #[ORM\Column(type: 'string', length: 255, enumType: StatusEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, enumType: StatusEnum::class)]
     private string $status;
 
     #[ORM\ManyToOne(inversedBy: 'projectAssign')]
