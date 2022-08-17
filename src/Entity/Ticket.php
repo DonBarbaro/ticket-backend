@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Dto\InputDto\TicketInputDto;
+use App\Dto\OutputDto\TicketOutputDto;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
 use App\Enums\StatusEnum;
@@ -17,7 +19,20 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'newTicket' => [
+            'method' => 'POST',
+            'path' => '/tickets',
+            'input' => TicketInputDto::class,
+        ],
+        'newTickets' => [
+            'method' => 'GET',
+            'path' => '/tickets',
+            'output' => TicketOutputDto::class,
+        ]
+    ],
+)]
 class Ticket
 {
     #[ORM\Id]
@@ -118,14 +133,17 @@ class Ticket
         return $this;
     }
 
-    public function getProblemType(): ?string
+    public function getProblemType(): ProblemTypeEnum
     {
-        return $this->problemType;
+        return ProblemTypeEnum::from($this->problemType);
     }
 
-    public function setProblemType(string $problemType): self
+    public function setProblemType(string|ProblemTypeEnum $problemType): self
     {
-        $this->problemType = $problemType;
+        $this->problemType = $problemType instanceof ProblemTypeEnum?
+            $problemType->value:
+            $problemType
+        ;
 
         return $this;
     }

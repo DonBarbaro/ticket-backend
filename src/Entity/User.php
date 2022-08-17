@@ -5,18 +5,17 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Dto\LoginInputDto;
+use App\Dto\InputDto\LoginInputDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidType;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -28,9 +27,10 @@ use Ramsey\Uuid\UuidInterface;
             'input' => LoginInputDto::class,
             'normalization_context' => ['groups' => 'user:read'],
             'controller' => PlaceholderAction::class,
-        ]
+        ],
+        'get'
     ],
-    itemOperations: [],
+    itemOperations: ['get'],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

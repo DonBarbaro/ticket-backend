@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
-enum ProblemTypeEnum: string{
-    // tu doplnit problm typ
+enum ProblemTypeEnum: string
+{
+    case Program = 'Program';
+    case Economy = 'Economy';
 }
