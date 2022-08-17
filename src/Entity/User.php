@@ -26,7 +26,6 @@ use Ramsey\Uuid\UuidInterface;
             'method' => 'POST',
             'path' => '/auth/login',
             'input' => LoginInputDto::class,
-            'normalization_context' => ['groups' => 'user:read'],
             'controller' => PlaceholderAction::class,
         ]
     ],

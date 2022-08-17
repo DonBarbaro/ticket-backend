@@ -7,9 +7,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class LoginInputDto
 {
-    #[Groups(['user:write'])]
-    public $email;
+    public string $email;
 
-    #[Groups(['user:write'])]
-    public $password;
+    public string $password;
 }
