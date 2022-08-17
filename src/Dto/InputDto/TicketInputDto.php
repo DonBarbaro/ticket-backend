@@ -5,6 +5,9 @@ namespace App\Dto\InputDto;
 use App\Entity\Project;
 use App\Entity\Ticket;
 use App\Entity\User;
+use App\Enums\ProblemTypeEnum;
+use App\Enums\SourceEnum;
+use App\Enums\StatusEnum;
 use Doctrine\Common\Collections\Collection;
 
 class TicketInputDto

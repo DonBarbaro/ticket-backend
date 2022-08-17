@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\DataTransformer\InputDataTransformer;
+namespace App\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use App\Dto\InputDto\TicketInputDto;

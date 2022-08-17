@@ -53,7 +53,7 @@ class Ticket
     private string $phone;
 
     #[ORM\Column(type: Types::STRING, length: 255, enumType: ProblemTypeEnum::class)]
-    private string $problemType;
+    private $problemType;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $message;
@@ -62,10 +62,10 @@ class Ticket
     private Collection $assign;
 
     #[ORM\Column(type: Types::STRING, length: 255, enumType: SourceEnum::class)]
-    private string $source;
+    private $source;
 
     #[ORM\Column(type: Types::STRING, length: 255, enumType: StatusEnum::class)]
-    private string $status;
+    private $status;
 
     #[ORM\ManyToOne(inversedBy: 'projectAssign')]
     private Project $project;
@@ -144,7 +144,6 @@ class Ticket
             $problemType->value:
             $problemType
         ;
-
         return $this;
     }
 
@@ -184,28 +183,32 @@ class Ticket
         return $this;
     }
 
-    public function getSource(): ?string
+    public function getSource(): SourceEnum
     {
-        return $this->source;
+        return SourceEnum::from($this->source);
     }
 
 
-    public function setSource(?string $source): self
+    public function setSource(string|SourceEnum $source): self
     {
-        $this->source = $source;
-
+        $this->source = $source instanceof SourceEnum?
+            $source->value:
+            $source
+        ;
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): StatusEnum
     {
-        return $this->status;
+        return StatusEnum::from($this->status);
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(string|StatusEnum $status): self
     {
-        $this->status = $status;
-
+        $this->status = $status instanceof SourceEnum?
+            $status->value:
+            $status
+        ;
         return $this;
     }
 
