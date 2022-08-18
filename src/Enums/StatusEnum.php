@@ -2,8 +2,9 @@
 
 namespace App\Enums;
 
-enum StatusEnum: string{
-    case new = 'new';
-    case progress = 'progress';
-    case solved = 'solved';
+enum StatusEnum: string
+{
+    case New = 'New';
+    case Progress = 'Progress';
+    case Solved = 'Solved';
 }

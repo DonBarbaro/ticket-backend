@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Dto\InputDto\TicketInputDto;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
 use App\Enums\StatusEnum;
 use App\Repository\TicketRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -17,7 +19,20 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'newTicket' => [
+            'method' => 'POST',
+            'path' => '/tickets',
+            'input' => TicketInputDto::class,
+        ],
+        'newTickets' => [
+            'method' => 'GET',
+            'path' => '/tickets',
+        ]
+    ],
+)]
+#[ORM\HasLifecycleCallbacks]
 class Ticket
 {
     #[ORM\Id]
@@ -37,7 +52,7 @@ class Ticket
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $phone;
 
-    #[ORM\Column(type: Types::STRING, length: 255, enumType: ProblemTypeEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $problemType;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
@@ -46,17 +61,17 @@ class Ticket
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
     private Collection $assign;
 
-    #[ORM\Column(type: Types::STRING, length: 255, enumType: SourceEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $source;
 
-    #[ORM\Column(type: Types::STRING, length: 255, enumType: StatusEnum::class)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $status;
 
     #[ORM\ManyToOne(inversedBy: 'projectAssign')]
     private Project $project;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $createdAt;
+    private DateTime $createdAt;
 
     public function __construct(UuidInterface $id = null)
     {
@@ -118,15 +133,17 @@ class Ticket
         return $this;
     }
 
-    public function getProblemType(): ?string
+    public function getProblemType(): ProblemTypeEnum
     {
-        return $this->problemType;
+        return ProblemTypeEnum::from($this->problemType);
     }
 
-    public function setProblemType(string $problemType): self
+    public function setProblemType(string|ProblemTypeEnum $problemType): self
     {
-        $this->problemType = $problemType;
-
+        $this->problemType = $problemType instanceof ProblemTypeEnum?
+            $problemType->value:
+            $problemType
+        ;
         return $this;
     }
 
@@ -166,28 +183,32 @@ class Ticket
         return $this;
     }
 
-    public function getSource(): ?string
+    public function getSource(): SourceEnum
     {
-        return $this->source;
+        return SourceEnum::from($this->source);
     }
 
 
-    public function setSource(?string $source): self
+    public function setSource(string|SourceEnum $source): self
     {
-        $this->source = $source;
-
+        $this->source = $source instanceof SourceEnum?
+            $source->value:
+            $source
+        ;
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): StatusEnum
     {
-        return $this->status;
+        return StatusEnum::from($this->status);
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(string|StatusEnum $status): self
     {
-        $this->status = $status;
-
+        $this->status = $status instanceof SourceEnum?
+            $status->value:
+            $status
+        ;
         return $this;
     }
 
@@ -208,9 +229,10 @@ class Ticket
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    #[ORM\PrePersist]
+    public function setCreatedAt(): self
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new DateTime();
 
         return $this;
     }
