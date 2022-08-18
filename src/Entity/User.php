@@ -5,7 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Api\Action\RegisterAction;
 use App\Dto\InputDto\LoginInputDto;
+use App\Dto\InputDto\RegistrationInputDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,6 +18,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -27,9 +30,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
             'input' => LoginInputDto::class,
             'controller' => PlaceholderAction::class,
         ],
-        'get'
+        'register' => [
+            'method' => 'POST',
+            'path' => '/auth/register',
+            'controller' => RegisterAction::class,
+            'input' => RegistrationInputDto::class
+        ],
+        'get',
     ],
     itemOperations: ['get'],
+    normalizationContext: [
+        'groups' => ['user:read']
+    ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -39,9 +51,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private UuidInterface $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups('user:read')]
     private string $email;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
+    #[Groups('user:read')]
     private array $roles = [];
 
     /**
@@ -50,7 +64,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::STRING)]
     private string $password;
 
+    private string $plainPassword;
+
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'assign')]
+    #[Groups('user:read')]
     private Collection $tickets;
 
 
@@ -172,5 +189,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPlainPassword(): string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string $plainPassword
+     */
+    public function setPlainPassword(string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
     }
 }
