@@ -19,8 +19,7 @@ class RegisterUser
     {
         $user = new User();
         $user->setEmail($inputDto->email);
-        $user->setPlainPassword($inputDto->plainPassword);
-        $plainPassword = $user->getPlainPassword();
+        $plainPassword = $inputDto->password;
         $hashedPassword = $this->passwordHasher->hashPassword(
             $user,
             $plainPassword

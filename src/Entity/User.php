@@ -34,7 +34,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'method' => 'POST',
             'path' => '/auth/register',
             'controller' => RegisterAction::class,
-            'input' => RegistrationInputDto::class
+            'input' => RegistrationInputDto::class,
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only admins can register new users!',
         ],
         'get',
     ],
@@ -64,8 +66,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::STRING)]
     private string $password;
 
-    private string $plainPassword;
-
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'assign')]
     #[Groups('user:read')]
     private Collection $tickets;
@@ -75,6 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->id= $id ?: Uuid::uuid4();
         $this->tickets = new ArrayCollection();
+        $this->roles = [];
     }
 
 
@@ -191,19 +192,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPlainPassword(): string
-    {
-        return $this->plainPassword;
-    }
-
-    /**
-     * @param string $plainPassword
-     */
-    public function setPlainPassword(string $plainPassword): void
-    {
-        $this->plainPassword = $plainPassword;
-    }
 }
