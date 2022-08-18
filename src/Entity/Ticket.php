@@ -5,11 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Dto\InputDto\TicketInputDto;
-use App\Dto\OutputDto\TicketOutputDto;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
 use App\Enums\StatusEnum;
 use App\Repository\TicketRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -29,10 +29,10 @@ use Ramsey\Uuid\UuidInterface;
         'newTickets' => [
             'method' => 'GET',
             'path' => '/tickets',
-            'output' => TicketOutputDto::class,
         ]
     ],
 )]
+#[ORM\HasLifecycleCallbacks]
 class Ticket
 {
     #[ORM\Id]
@@ -52,8 +52,8 @@ class Ticket
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $phone;
 
-    #[ORM\Column(type: Types::STRING, length: 255, enumType: ProblemTypeEnum::class)]
-    private $problemType;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $problemType;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $message;
@@ -61,17 +61,17 @@ class Ticket
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
     private Collection $assign;
 
-    #[ORM\Column(type: Types::STRING, length: 255, enumType: SourceEnum::class)]
-    private $source;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $source;
 
-    #[ORM\Column(type: Types::STRING, length: 255, enumType: StatusEnum::class)]
-    private $status;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $status;
 
     #[ORM\ManyToOne(inversedBy: 'projectAssign')]
     private Project $project;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTimeInterface $createdAt;
+    private DateTime $createdAt;
 
     public function __construct(UuidInterface $id = null)
     {
@@ -229,9 +229,10 @@ class Ticket
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    #[ORM\PrePersist]
+    public function setCreatedAt(): self
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new DateTime();
 
         return $this;
     }
