@@ -42,22 +42,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ],
     itemOperations: ['get'],
     normalizationContext: [
-        'groups' => ['user:read']
+        'groups' => [self::READ]
     ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const READ = 'user:read';
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private UuidInterface $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups('user:read')]
+    #[Groups(self::READ)]
     private string $email;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
-    #[Groups('user:read')]
+    #[Groups(self::READ)]
     private array $roles = [];
 
     /**
@@ -67,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'assign')]
-    #[Groups('user:read')]
+    #[Groups(self::READ)]
     private Collection $tickets;
 
 
