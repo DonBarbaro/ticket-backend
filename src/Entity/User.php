@@ -5,7 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Api\Action\RegisterAction;
 use App\Dto\InputDto\LoginInputDto;
+use App\Dto\InputDto\RegistrationInputDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,6 +18,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -27,21 +30,36 @@ use Symfony\Component\Security\Core\User\UserInterface;
             'input' => LoginInputDto::class,
             'controller' => PlaceholderAction::class,
         ],
-        'get'
+        'register' => [
+            'method' => 'POST',
+            'path' => '/auth/register',
+            'controller' => RegisterAction::class,
+            'input' => RegistrationInputDto::class,
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only admins can register new users!',
+        ],
+        'get',
     ],
     itemOperations: ['get'],
+    normalizationContext: [
+        'groups' => [self::READ]
+    ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const READ = 'user:read';
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private UuidInterface $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::READ)]
     private string $email;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
+    #[Groups(self::READ)]
     private array $roles = [];
 
     /**
@@ -51,6 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'assign')]
+    #[Groups(self::READ)]
     private Collection $tickets;
 
 
@@ -58,6 +77,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->id= $id ?: Uuid::uuid4();
         $this->tickets = new ArrayCollection();
+        $this->roles = [];
     }
 
 
@@ -173,4 +193,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 }
