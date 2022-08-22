@@ -6,11 +6,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RegistrationInputDto
 {
+    #[Assert\NotNull]
+    #[Assert\Email(
+        message: 'The email {{ value }} is not a valid email.',
+    )]
     public string $email;
 
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 6,
+        minMessage: 'Your password must be at least 6 characters long',
+    )]
     public string $password;
-
-//    public string $roles;
 
     public function setEmail(string $email): self
     {
