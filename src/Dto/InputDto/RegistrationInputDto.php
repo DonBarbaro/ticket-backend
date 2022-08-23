@@ -3,16 +3,16 @@
 namespace App\Dto\InputDto;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationInputDto
 {
-    #[Assert\NotNull]
+    #[Assert\NotBlank]
     #[Assert\Email(
         message: 'The email {{ value }} is not a valid email.',
     )]
     public string $email;
 
-    #[Assert\NotNull]
     #[Assert\Length(
         min: 6,
         minMessage: 'Your password must be at least 6 characters long',
