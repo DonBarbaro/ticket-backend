@@ -72,14 +72,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(self::READ)]
     private Collection $tickets;
 
+    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'userProject')]
+    private Collection $projectAssign;
 
     public function __construct(UuidInterface $id = null)
     {
         $this->id= $id ?: Uuid::uuid4();
         $this->tickets = new ArrayCollection();
         $this->roles = [];
+        $this->projectAssign = new ArrayCollection();
     }
-
 
     public function getEmail(): string
     {
@@ -190,6 +192,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->tickets->removeElement($ticket)) {
             $ticket->removeAssign($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProjectAssign(): Collection
+    {
+        return $this->projectAssign;
+    }
+
+    public function addProjectAssign(Project $projectAssign): self
+    {
+        if (!$this->projectAssign->contains($projectAssign)) {
+            $this->projectAssign->add($projectAssign);
+        }
+
+        return $this;
+    }
+
+    public function removeProjectAssign(Project $projectAssign): self
+    {
+        $this->projectAssign->removeElement($projectAssign);
 
         return $this;
     }

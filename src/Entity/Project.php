@@ -33,10 +33,14 @@ class Project
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
     private Collection $projectAssign;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'projectAssign')]
+    private Collection $userProject;
+
     public function __construct(UuidInterface $id = null)
     {
         $this->id= $id ?: Uuid::uuid4();
         $this->projectAssign = new ArrayCollection();
+        $this->userProject = new ArrayCollection();
     }
 
     public function getId(): UuidInterface
@@ -93,6 +97,33 @@ class Project
             if ($projectAssign->getProject() === $this) {
                 $projectAssign->setProject(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUserProject(): Collection
+    {
+        return $this->userProject;
+    }
+
+    public function addUserProject(User $userProject): self
+    {
+        if (!$this->userProject->contains($userProject)) {
+            $this->userProject->add($userProject);
+            $userProject->addProjectAssign($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserProject(User $userProject): self
+    {
+        if ($this->userProject->removeElement($userProject)) {
+            $userProject->removeProjectAssign($this);
         }
 
         return $this;
