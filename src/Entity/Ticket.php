@@ -17,54 +17,72 @@ use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Doctrine\UuidType;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ApiResource(
     collectionOperations: [
         'newTicket' => [
             'method' => 'POST',
-            'path' => '/tickets',
             'input' => TicketInputDto::class,
         ],
         'newTickets' => [
             'method' => 'GET',
-            'path' => '/tickets',
         ]
     ],
+    itemOperations: [
+        'updateTicket' => [
+            'method' => 'PUT',
+            'denormalization_context' => [
+                'groups' => [self::TICKET_PUT]
+            ]
+        ],
+        'get'
+    ],
+
 )]
 #[ORM\HasLifecycleCallbacks]
 class Ticket
 {
+    private const TICKET_PUT = 'ticket_put';
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ApiProperty(identifier: true)]
     private UuidInterface $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_PUT)]
     private string $firstName;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_PUT)]
     private string $lastName;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_PUT)]
     private string $email;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_PUT)]
     private string $phone;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_PUT)]
     private string $problemType;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $message;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
+    #[Groups(self::TICKET_PUT)]
     private Collection $assign;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     private string $source;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_PUT)]
     private string $status;
 
     #[ORM\ManyToOne(inversedBy: 'projectAssign')]
@@ -72,6 +90,10 @@ class Ticket
 
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(self::TICKET_PUT)]
+    private string $note;
 
     public function __construct(UuidInterface $id = null)
     {
@@ -233,6 +255,18 @@ class Ticket
     public function setCreatedAt(): self
     {
         $this->createdAt = new DateTime();
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): self
+    {
+        $this->note = $note;
 
         return $this;
     }

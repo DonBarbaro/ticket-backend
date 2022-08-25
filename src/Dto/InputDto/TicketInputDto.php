@@ -32,6 +32,8 @@ class TicketInputDto
 
     public Project $project;
 
+    public string $note;
+
     public static function toTicket(TicketInputDto $object): Ticket
     {
         return (new Ticket())
@@ -44,6 +46,7 @@ class TicketInputDto
             ->addAssign($object->assign)
             ->setSource($object->source)
             ->setStatus($object->status)
-            ->setProject($object->project);
+            ->setProject($object->project)
+            ->setNote($object->note);
     }
 }
