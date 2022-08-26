@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Api\Action\RegisterAction;
 use App\Dto\InputDto\LoginInputDto;
 use App\Dto\InputDto\RegistrationInputDto;
+use App\Entity\Embeddable\NotificationSettings;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -72,6 +73,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(self::READ)]
     private Collection $tickets;
 
+    #[ORM\Embedded(class: NotificationSettings::class )]
+    private $notificationSettings;
 
     public function __construct(UuidInterface $id = null)
     {
@@ -190,6 +193,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->tickets->removeElement($ticket)) {
             $ticket->removeAssign($this);
         }
+
+        return $this;
+    }
+
+    public function getNotificationSettings()
+    {
+        return $this->notificationSettings;
+    }
+
+    public function setNotificationSettings($notificationSettings): self
+    {
+        $this->notificationSettings = $notificationSettings;
 
         return $this;
     }
