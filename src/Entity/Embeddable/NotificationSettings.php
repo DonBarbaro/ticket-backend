@@ -22,5 +22,4 @@ class NotificationSettings
     private bool $emailVarified = true;
 
     private bool $push = true;
-
 }

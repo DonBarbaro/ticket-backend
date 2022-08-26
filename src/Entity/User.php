@@ -83,7 +83,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = [];
     }
 
-
     public function getEmail(): string
     {
         return $this->email;
