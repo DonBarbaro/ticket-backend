@@ -3,7 +3,7 @@
 namespace App\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
-use App\Dto\InputDto\TicketInputDto;
+use App\Dto\TicketInputDto;
 use App\Entity\Ticket;
 
 class TicketInputDataTransformer implements DataTransformerInterface

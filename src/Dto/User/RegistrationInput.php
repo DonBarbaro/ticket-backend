@@ -1,13 +1,19 @@
 <?php
 
-namespace App\Dto\InputDto;
+namespace App\Dto\User;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class RegistrationInputDto
+class RegistrationInput
 {
+
     public string $email;
 
+    #[Assert\Length(
+        min: 6,
+        minMessage: 'Password must be at least 6 long'
+    )]
     public string $password;
 
 //    public string $roles;
