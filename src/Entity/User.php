@@ -13,12 +13,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Doctrine\UuidType;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -50,9 +48,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const READ = 'user:read';
 
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
-    private UuidInterface $id;
+    private Uuid $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Groups(self::READ)]
@@ -73,14 +72,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tickets;
 
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'userProject')]
-    private Collection $projectAssign;
+    private Collection $project;
 
-    public function __construct(UuidInterface $id = null)
+    public function __construct()
     {
-        $this->id= $id ?: Uuid::uuid4();
         $this->tickets = new ArrayCollection();
         $this->roles = [];
-        $this->projectAssign = new ArrayCollection();
+        $this->project = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -95,15 +93,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getId(): UuidInterface
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
 
 
-    public function getUserIdentifier(): string
+    public function getUserIdentifier(): Uuid
     {
-        return (string) $this->id;
+        return $this->id;
     }
 
     /**
@@ -199,15 +197,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Project>
      */
-    public function getProjectAssign(): Collection
+    public function getProject(): Collection
     {
-        return $this->projectAssign;
+        return $this->project;
     }
 
     public function addProjectAssign(Project $projectAssign): self
     {
-        if (!$this->projectAssign->contains($projectAssign)) {
-            $this->projectAssign->add($projectAssign);
+        if (!$this->project->contains($projectAssign)) {
+            $this->project->add($projectAssign);
         }
 
         return $this;
@@ -215,7 +213,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeProjectAssign(Project $projectAssign): self
     {
-        $this->projectAssign->removeElement($projectAssign);
+        $this->project->removeElement($projectAssign);
 
         return $this;
     }

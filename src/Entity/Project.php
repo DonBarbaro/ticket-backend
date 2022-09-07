@@ -33,7 +33,7 @@ class Project
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
     private Collection $projectAssign;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'projectAssign')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'project')]
     private Collection $userProject;
 
     public function __construct(UuidInterface $id = null)
