@@ -22,5 +22,5 @@ class NotificationSettings
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $emailVerified = false;
 
-    private bool $push = true;
+    private bool $push = false;
 }
