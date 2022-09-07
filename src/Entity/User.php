@@ -74,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tickets;
 
     #[ORM\Embedded(class: NotificationSettings::class )]
-    private $notificationSettings;
+    private NotificationSettings $notificationSettings;
 
     public function __construct(UuidInterface $id = null)
     {
@@ -196,7 +196,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNotificationSettings()
+    public function getNotificationSettings(): NotificationSettings
     {
         return $this->notificationSettings;
     }
