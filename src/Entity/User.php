@@ -14,12 +14,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Doctrine\UuidType;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -51,9 +49,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const READ = 'user:read';
 
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
-    private UuidInterface $id;
+    private Uuid $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Groups(self::READ)]
@@ -74,13 +73,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tickets;
 
     #[ORM\Embedded(class: NotificationSettings::class )]
-    private $notificationSettings;
+    private NotificationSettings $notificationSettings;
 
-    public function __construct(UuidInterface $id = null)
+    #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'userProject')]
+    private Collection $projects;
+
+    public function __construct()
     {
-        $this->id= $id ?: Uuid::uuid4();
         $this->tickets = new ArrayCollection();
         $this->roles = [];
+        $this->projects = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -95,15 +97,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getId(): UuidInterface
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
 
 
-    public function getUserIdentifier(): string
+    public function getUserIdentifier(): Uuid
     {
-        return (string) $this->id;
+        return $this->id;
     }
 
     /**
@@ -196,7 +198,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getNotificationSettings()
+    public function getNotificationSettings(): NotificationSettings
     {
         return $this->notificationSettings;
     }
@@ -204,6 +206,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNotificationSettings($notificationSettings): self
     {
         $this->notificationSettings = $notificationSettings;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProject(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Project $project): self
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Project $project): self
+    {
+        $this->projects->removeElement($project);
 
         return $this;
     }

@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Dto\InputDto\TicketInputDto;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
@@ -33,6 +36,8 @@ use Ramsey\Uuid\UuidInterface;
     ],
 )]
 #[ORM\HasLifecycleCallbacks]
+#[ApiFilter(SearchFilter::class, properties: ['source' => 'exact', 'status' => 'exact', 'problemType' => 'exact', 'project.id' => 'exact'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 class Ticket
 {
     #[ORM\Id]
