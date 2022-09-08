@@ -9,37 +9,64 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Doctrine\UuidType;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Uuid;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource(
+    collectionOperations: [
+        'post' => [
+            'security' => "is_granted('ROLE_ADMIN')",
+            'security_message' => 'Only admins can create create new project!'
+        ],
+        'get'
+    ],
+    itemOperations: [
+        'get'
+    ],
+    denormalizationContext: [
+        'groups' => self::PROJECT_WRITE
+    ],
+    normalizationContext: [
+        'groups' => self::PROJECT_READ
+    ]
 
 )]
 class Project
 {
+    public const PROJECT_READ = 'project:read';
+    public const PROJECT_WRITE = 'project:write';
+
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
-    private UuidInterface $id;
+    private Uuid $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups([self::PROJECT_WRITE, self::PROJECT_READ])]
     private string $name;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::PROJECT_READ)]
     private string $projectToken;
 
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
-    private Collection $projectAssign;
+    #[Groups(self::PROJECT_READ)]
+    private Collection $tickets;
 
-    public function __construct(UuidInterface $id = null)
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'project')]
+    #[Groups(self::PROJECT_READ)]
+    private Collection $users;
+
+    public function __construct()
     {
-        $this->id= $id ?: Uuid::uuid4();
-        $this->projectAssign = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->projectToken = rtrim(strtr(base64_encode(random_bytes(50)), '+/', '-_'), '=');
     }
 
-    public function getId(): UuidInterface
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -71,30 +98,55 @@ class Project
     /**
      * @return Collection<int, Ticket>
      */
-    public function getProjectAssign(): Collection
+    public function getTickets(): Collection
     {
-        return $this->projectAssign;
+        return $this->tickets;
     }
 
-    public function addProjectAssign(Ticket $projectAssign): self
+    public function addTickets(Ticket $tickets): self
     {
-        if (!$this->projectAssign->contains($projectAssign)) {
-            $this->projectAssign->add($projectAssign);
-            $projectAssign->setProject($this);
+        if (!$this->tickets->contains($tickets)) {
+            $this->tickets->add($tickets);
+            $tickets->setProject($this);
         }
 
         return $this;
     }
 
-    public function removeProjectAssign(Ticket $projectAssign): self
+    public function removeTickets(Ticket $tickets): self
     {
-        if ($this->projectAssign->removeElement($projectAssign)) {
+        if ($this->tickets->removeElement($tickets)) {
             // set the owning side to null (unless already changed)
-            if ($projectAssign->getProject() === $this) {
-                $projectAssign->setProject(null);
+            if ($tickets->getProject() === $this) {
+                $tickets->setProject(null);
             }
         }
+        return $this;
+    }
 
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUsers(User $users): self
+    {
+        if (!$this->users->contains($users)) {
+            $this->users->add($users);
+            $users->addProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsers(User $users): self
+    {
+        if ($this->users->removeElement($users)) {
+            $users->removeProject($this);
+        }
         return $this;
     }
 }
