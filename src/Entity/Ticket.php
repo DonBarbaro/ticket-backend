@@ -17,22 +17,26 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Doctrine\UuidType;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Uuid;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ApiResource(
     collectionOperations: [
-        'newTicket' => [
-            'method' => 'POST',
-            'path' => '/tickets',
-            'input' => TicketInputDto::class,
+        'post' => [
+            'denormalization_context' => [
+                'groups' => [self::TICKET_WRITE]
+            ]
         ],
-        'newTickets' => [
-            'method' => 'GET',
-            'path' => '/tickets',
-        ]
+        'get'
+    ],
+    itemOperations: [
+        'put' => [
+            'denormalization_context' => [
+                'groups' => [self::TICKET_WRITE]
+            ]
+        ],
+        'get'
     ],
 )]
 #[ORM\HasLifecycleCallbacks]
@@ -40,55 +44,70 @@ use Ramsey\Uuid\UuidInterface;
 #[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 class Ticket
 {
+    private const TICKET_WRITE = 'ticket_write';
+
     #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
-    private UuidInterface $id;
+    private Uuid $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $firstName;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $lastName;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $email;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $phone;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $problemType;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $message;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
+    #[Groups(self::TICKET_WRITE)]
     private Collection $assign;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $source;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[Groups(self::TICKET_WRITE)]
     private string $status;
 
     #[ORM\ManyToOne(inversedBy: 'projectAssign')]
+    #[Groups(self::TICKET_WRITE)]
     private Project $project;
 
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    public function __construct(UuidInterface $id = null)
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(self::TICKET_WRITE)]
+    private string $note;
+
+    public function __construct()
     {
-        $this->id= $id ?: Uuid::uuid4();
         $this->assign = new ArrayCollection();
     }
 
-    public function getId(): UuidInterface
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
-
 
     public function getFirstName(): ?string
     {
@@ -238,6 +257,18 @@ class Ticket
     public function setCreatedAt(): self
     {
         $this->createdAt = new DateTime();
+
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): self
+    {
+        $this->note = $note;
 
         return $this;
     }
