@@ -72,13 +72,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tickets;
 
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'userProject')]
-    private Collection $project;
+    private Collection $projects;
 
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->roles = [];
-        $this->project = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -199,21 +199,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getProject(): Collection
     {
-        return $this->project;
+        return $this->projects;
     }
 
-    public function addProjectAssign(Project $projectAssign): self
+    public function addProject(Project $project): self
     {
-        if (!$this->project->contains($projectAssign)) {
-            $this->project->add($projectAssign);
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
         }
 
         return $this;
     }
 
-    public function removeProjectAssign(Project $projectAssign): self
+    public function removeProject(Project $project): self
     {
-        $this->project->removeElement($projectAssign);
+        $this->projects->removeElement($project);
 
         return $this;
     }
