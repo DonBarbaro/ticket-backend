@@ -18,7 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints\Uuid;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ApiResource(
@@ -48,6 +48,7 @@ class Ticket
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
     private Uuid $id;
@@ -76,6 +77,7 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $message;
 
+    //toto som opravil 2
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
     private Collection $assign;
@@ -88,7 +90,8 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $status;
 
-    #[ORM\ManyToOne(inversedBy: 'projectAssign')]
+    //toto som opravil 3
+    #[ORM\ManyToOne(inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
     private Project $project;
 
@@ -183,9 +186,6 @@ class Ticket
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
     public function getAssign(): Collection
     {
         return $this->assign;
