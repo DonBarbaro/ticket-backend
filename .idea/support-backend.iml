@@ -144,10 +144,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/willdurand/negotiation" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fig/link-util" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/api-platform/core" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/brick/math" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/ramsey/uuid" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/ramsey/collection" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/ramsey/uuid-doctrine" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-uuid" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/uid" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -9,8 +9,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource(
@@ -38,6 +38,7 @@ class Project
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
     private Uuid $id;
@@ -52,11 +53,17 @@ class Project
 
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
     #[Groups(self::PROJECT_READ)]
-    private Collection $projectAssign;
+    private Collection $tickets;
+
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'projects')]
+    #[Groups(self::PROJECT_READ)]
+    private Collection $users;
 
     public function __construct()
     {
-        $this->projectAssign = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
+        $this->users = new ArrayCollection();
         $this->projectToken = rtrim(strtr(base64_encode(random_bytes(50)), '+/', '-_'), '=');
     }
 
@@ -89,33 +96,52 @@ class Project
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ticket>
-     */
-    public function getProjectAssign(): Collection
+    public function getTickets(): Collection
     {
-        return $this->projectAssign;
+        return $this->tickets;
     }
 
-    public function addProjectAssign(Ticket $projectAssign): self
+    public function addTickets(Ticket $tickets): self
     {
-        if (!$this->projectAssign->contains($projectAssign)) {
-            $this->projectAssign->add($projectAssign);
-            $projectAssign->setProject($this);
+        if (!$this->tickets->contains($tickets)) {
+            $this->tickets->add($tickets);
+            $tickets->setProject($this);
         }
 
         return $this;
     }
 
-    public function removeProjectAssign(Ticket $projectAssign): self
+    public function removeTickets(Ticket $tickets): self
     {
-        if ($this->projectAssign->removeElement($projectAssign)) {
+        if ($this->tickets->removeElement($tickets)) {
             // set the owning side to null (unless already changed)
-            if ($projectAssign->getProject() === $this) {
-                $projectAssign->setProject(null);
+            if ($tickets->getProject() === $this) {
+                $tickets->setProject(null);
             }
         }
+        return $this;
+    }
 
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUsers(User $users): self
+    {
+        if (!$this->users->contains($users)) {
+            $this->users->add($users);
+            $users->addProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsers(User $users): self
+    {
+        if ($this->users->removeElement($users)) {
+            $users->removeProject($this);
+        }
         return $this;
     }
 }
