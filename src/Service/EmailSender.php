@@ -5,6 +5,7 @@ namespace App\Service;
 use Exception;
 use SendGrid;
 use SendGrid\Mail\Mail;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class EmailSender
 {
@@ -30,7 +31,7 @@ class EmailSender
         print $response->statusCode() . "\n";
         print $response->body() . "\n";
     }catch (Exception $e){
-        echo 'Caught exception: '. $e->getMessage(). "\n";
+       throw new BadRequestException('MailSender error');
     }
     }
 }
