@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Dto\InputDto;
+namespace App\Dto\User;
 
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class LoginInputDto
+class LoginInput
 {
     public string $email;
 

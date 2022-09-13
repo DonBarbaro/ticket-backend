@@ -5,10 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Api\Action\RegisterAction;
-use App\Dto\InputDto\LoginInputDto;
-use App\Dto\InputDto\RegistrationInputDto;
-use App\Entity\Embeddable\NotificationSettings;
+use App\Dto\User\LoginInput;
+use App\Dto\User\RegistrationInput;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -26,14 +25,13 @@ use Symfony\Component\Uid\Uuid;
         'login' => [
             'method' => 'POST',
             'path' => '/auth/login',
-            'input' => LoginInputDto::class,
+            'input' => LoginInput::class,
             'controller' => PlaceholderAction::class,
         ],
         'register' => [
             'method' => 'POST',
             'path' => '/auth/register',
-            'controller' => RegisterAction::class,
-            'input' => RegistrationInputDto::class,
+            'input' => RegistrationInput::class,
             'security' => "is_granted('ROLE_ADMIN')",
             'security_message' => 'Only admins can register new users!',
         ],
@@ -57,6 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Groups(self::READ)]
+    #[Assert\Email(
+        message: 'The email {{ value }} is not a valid email.',
+    )]
     private string $email;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
