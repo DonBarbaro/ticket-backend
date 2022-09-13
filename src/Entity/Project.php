@@ -30,7 +30,6 @@ use Symfony\Component\Uid\Uuid;
     normalizationContext: [
         'groups' => self::PROJECT_READ
     ]
-
 )]
 class Project
 {
@@ -52,12 +51,11 @@ class Project
     #[Groups(self::PROJECT_READ)]
     private string $projectToken;
 
-    //toto som opravil 3
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
     #[Groups(self::PROJECT_READ)]
     private Collection $tickets;
 
-    //toto som opravil 1
+
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'projects')]
     #[Groups(self::PROJECT_READ)]
     private Collection $users;
