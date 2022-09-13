@@ -9,8 +9,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints\Uuid;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource(
@@ -38,6 +39,7 @@ class Project
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
     private Uuid $id;
@@ -50,11 +52,13 @@ class Project
     #[Groups(self::PROJECT_READ)]
     private string $projectToken;
 
+    //toto som opravil 3
     #[ORM\OneToMany(mappedBy: 'project', targetEntity: Ticket::class)]
     #[Groups(self::PROJECT_READ)]
     private Collection $tickets;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'project')]
+    //toto som opravil 1
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'projects')]
     #[Groups(self::PROJECT_READ)]
     private Collection $users;
 
@@ -94,9 +98,6 @@ class Project
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ticket>
-     */
     public function getTickets(): Collection
     {
         return $this->tickets;
@@ -123,9 +124,6 @@ class Project
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
     public function getUsers(): Collection
     {
         return $this->users;
