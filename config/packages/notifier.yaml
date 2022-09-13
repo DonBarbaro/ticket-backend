@@ -4,9 +4,9 @@ framework:
             telegram: '%env(TELEGRAM_DSN)%'
         channel_policy:
             # use chat/slack, chat/telegram, sms/twilio or sms/nexmo
-            urgent: ['chat/telegram']
-            high: ['chat/telegram']
-            medium: ['chat/telegram']
-            low: ['chat/telegram']
+            urgent: ['email/telegram']
+            high: ['email/telegram']
+            medium: ['email/telegram']
+            low: ['email/telegram']
         admin_recipients:
             - { email: admin@example.com }
