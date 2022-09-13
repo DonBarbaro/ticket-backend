@@ -5,9 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Api\Action\RegisterAction;
-use App\Dto\InputDto\LoginInputDto;
-use App\Dto\InputDto\RegistrationInputDto;
+use App\Dto\User\LoginInput;
+use App\Dto\User\RegistrationInput;
 use App\Entity\Embeddable\NotificationSettings;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,14 +25,13 @@ use Symfony\Component\Validator\Constraints\Uuid;
         'login' => [
             'method' => 'POST',
             'path' => '/auth/login',
-            'input' => LoginInputDto::class,
+            'input' => LoginInput::class,
             'controller' => PlaceholderAction::class,
         ],
         'register' => [
             'method' => 'POST',
             'path' => '/auth/register',
-            'controller' => RegisterAction::class,
-            'input' => RegistrationInputDto::class,
+            'input' => RegistrationInput::class,
             'security' => "is_granted('ROLE_ADMIN')",
             'security_message' => 'Only admins can register new users!',
         ],

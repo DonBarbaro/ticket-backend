@@ -21,5 +21,10 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\EmailSender:
+        arguments:
+            $apiKey: '%env(resolve:API_KEY)%'
+            $from: '%env(resolve:SENDGRID_FROM)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
