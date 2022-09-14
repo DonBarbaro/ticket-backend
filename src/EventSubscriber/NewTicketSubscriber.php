@@ -11,18 +11,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Notifier\Bridge\Telegram\TelegramOptions;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
-use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class NewTicketSubscriber implements EventSubscriberInterface
 {
-    public function __construct(
-        private ChatterInterface $chatter,
-        private HttpClientInterface $client,
-    )
-    {
-    }
 
     public static function getSubscribedEvents()
     {
@@ -31,7 +23,7 @@ class NewTicketSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function sendTelegram(ViewEvent $event, ChatterInterface $chatter): void
+    public function sendTelegram(ViewEvent $event, ChatterInterface $chatter, HttpClientInterface $client): void
     {
         $ticket = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
@@ -40,15 +32,15 @@ class NewTicketSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $result = $this->client->request(
+        $result = $client->request(
             "GET",
-            'https://api.telegram.org/bot5572129519:AAE-dVh7JZO3rKlCRgwM-XNaKWyICDRPmTo/getUpdates'
+            'https://api.telegram.org/bot5720843129:AAHre4fDqLhgxvmoiLqmrcL8YiVv-pi6KXQ/getUpdates'
         )->toArray()['result'];
 
         foreach ($result as $message) {
             $telegramId = $message['message']['chat']['id'];
             $message = new ChatMessage(
-                'Vas telegram bol sparovany s uctom v applikacii.Teraz budete dostavat notifikacie cez telegram.',
+                'Nový ticket '.$ticket->getProject().' bol vytvoreny',
                 new TelegramOptions(
                     [
                         'chat_id' => $telegramId
@@ -56,7 +48,7 @@ class NewTicketSubscriber implements EventSubscriberInterface
                 )
             );
 
-            $this->chatter->send($message);
+            $chatter->send($message);
         }
     }
 }

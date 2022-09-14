@@ -25,25 +25,15 @@ class SendTelegram extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-//        $response = $this->client->request('GET', 'https://api.telegram.org/bot5720843129:AAH52XiquaqC7FVefO07azM5GN4mvl4OVMU/getUpdates');
-//        $content = $response->toArray();
-//
-//        $chatMessage = (new ChatMessage('Ahoj kraska'))
-//        ;
-//        $telegramOptions = (new TelegramOptions())
-//            ->chatId(5336884988)
-//        ;
-//        $chatMessage->options($telegramOptions);
-//        $this->chatter->send($chatMessage);
         $result = $this->client->request(
             "GET",
-            'https://api.telegram.org/bot5680388670:AAHmr25f_vv67ZReTMzFkpKvBHdO86d928s/getUpdates'
+            'https://api.telegram.org/bot5720843129:AAHre4fDqLhgxvmoiLqmrcL8YiVv-pi6KXQ/getUpdates'
         )->toArray()['result'];
 
         foreach ($result as $message) {
             $telegramId = $message['message']['chat']['id'];
             $message = new ChatMessage(
-                'AHoj',
+                'Ako sa mas',
                 new TelegramOptions(
                     [
                         'chat_id' => $telegramId
@@ -53,6 +43,8 @@ class SendTelegram extends Command
             $this->chatter->send($message);
             dd($message);
         }
+
         return Command::SUCCESS;
+
     }
 }
