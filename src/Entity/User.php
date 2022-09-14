@@ -56,9 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Groups(self::READ)]
-    #[Assert\Email(
-        message: 'The email {{ value }} is not a valid email.',
-    )]
     private string $email;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]

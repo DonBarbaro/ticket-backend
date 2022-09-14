@@ -4,6 +4,7 @@ namespace App\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use App\Entity\User;
+use App\Service\EmailSender;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserRegistrationInputDataTransformer implements DataTransformerInterface
@@ -24,6 +25,7 @@ class UserRegistrationInputDataTransformer implements DataTransformerInterface
         );
         $user->setPassword($hashedPassword);
         $user->setRoles(['ROLE_USER']);
+
 
         return $user;
     }

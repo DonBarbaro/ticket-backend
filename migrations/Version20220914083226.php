@@ -61,3 +61,4 @@ final class Version20220914083226 extends AbstractMigration
         $this->addSql('DROP TABLE user_project');
     }
 }
+
