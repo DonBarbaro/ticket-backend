@@ -101,6 +101,9 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $note;
 
+    #[ORM\OneToOne(mappedBy: 'ticket', cascade: ['persist', 'remove'])]
+    private ?TicketSettings $ticketSettings = null;
+
     public function __construct()
     {
         $this->assign = new ArrayCollection();
@@ -268,6 +271,28 @@ class Ticket
     public function setNote(?string $note): self
     {
         $this->note = $note;
+
+        return $this;
+    }
+
+    public function getTicketSettings(): ?TicketSettings
+    {
+        return $this->ticketSettings;
+    }
+
+    public function setTicketSettings(?TicketSettings $ticketSettings): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($ticketSettings === null && $this->ticketSettings !== null) {
+            $this->ticketSettings->setTicket(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($ticketSettings !== null && $ticketSettings->getTicket() !== $this) {
+            $ticketSettings->setTicket($this);
+        }
+
+        $this->ticketSettings = $ticketSettings;
 
         return $this;
     }

@@ -77,6 +77,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
     private Collection $projects;
 
+    #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
+    private ?TicketSettings $ticketSettings = null;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
@@ -203,6 +206,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeProject(Project $project): self
     {
         $this->projects->removeElement($project);
+
+        return $this;
+    }
+
+    public function getTicketSettings(): ?TicketSettings
+    {
+        return $this->ticketSettings;
+    }
+
+    public function setTicketSettings(TicketSettings $ticketSettings): self
+    {
+        // set the owning side of the relation if necessary
+        if ($ticketSettings->getOwner() !== $this) {
+            $ticketSettings->setOwner($this);
+        }
+
+        $this->ticketSettings = $ticketSettings;
 
         return $this;
     }
