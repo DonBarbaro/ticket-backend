@@ -78,7 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $projects;
 
     #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
-    private ?TicketSettings $ticketSettings = null;
+    private TicketSettings $ticketSettings;
 
     public function __construct()
     {

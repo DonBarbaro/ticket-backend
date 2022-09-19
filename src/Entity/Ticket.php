@@ -102,7 +102,7 @@ class Ticket
     private string $note;
 
     #[ORM\OneToOne(mappedBy: 'ticket', cascade: ['persist', 'remove'])]
-    private ?TicketSettings $ticketSettings = null;
+    private TicketSettings $ticketSettings;
 
     public function __construct()
     {
