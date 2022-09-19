@@ -7,7 +7,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Dto\TicketInputDto;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
 use App\Enums\StatusEnum;
