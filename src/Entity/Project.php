@@ -55,9 +55,8 @@ class Project
     #[Groups(self::PROJECT_READ)]
     private Collection $tickets;
 
-
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'projects')]
-    #[Groups(self::PROJECT_READ)]
+    #[Groups([self::PROJECT_WRITE, self::PROJECT_READ])]
     private Collection $users;
 
     public function __construct()
