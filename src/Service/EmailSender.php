@@ -26,7 +26,7 @@ class EmailSender
         $email->addDynamicTemplateDatas($payload);
 
         $response = $this->sendGrid->send($email);
-        if ($response->statusCode() >= 200 || $response->statusCode() < 300) {
+        if ($response->statusCode() < 200 || $response->statusCode() >= 300) {
             throw new BadRequestException('MailSender error');
         }
     }
