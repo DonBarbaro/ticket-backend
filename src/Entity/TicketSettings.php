@@ -25,7 +25,7 @@ class TicketSettings
     private User $owner;
 
     #[ORM\OneToOne(inversedBy: 'ticketSettings', cascade: ['persist', 'remove'])]
-    private Ticket $ticket;
+    private ?Ticket $ticket = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private bool $email;
