@@ -4,7 +4,7 @@ namespace App\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Ticket;
-use App\Entity\User;
+use App\Service\EmailService;
 use App\Service\TelegramService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -15,7 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 class NewTicketSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private TelegramService $telegramService
+        private TelegramService $telegramService,
+        private EmailService $emailService
     )
     {}
 
@@ -35,6 +36,6 @@ class NewTicketSubscriber implements EventSubscriberInterface
         }
         $users = $ticket->getProject()->getUsers()->toArray();
         $this->telegramService->newTicketMessage($users);
-
+        $this->emailService->newTicketMessage($users);
     }
 }
