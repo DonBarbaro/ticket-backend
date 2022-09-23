@@ -18,7 +18,7 @@ class TicketSettings
 
     #[ORM\OneToOne(inversedBy: 'ticketSettings', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private Status $status;
+    private ?Status $status = null;
 
     #[ORM\OneToOne(inversedBy: 'ticketSettings', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]

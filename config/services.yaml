@@ -26,5 +26,8 @@ services:
             $apiKey: '%env(resolve:API_KEY)%'
             $from: '%env(resolve:SENDGRID_FROM)%'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\EventListener\TicketListener:
+        tags:
+          - { name: doctrine.orm.entity_listener, event: 'preUpdate', entity: 'App\Entity\Ticket' }
+
+

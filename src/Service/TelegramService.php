@@ -24,4 +24,10 @@ class TelegramService
             }
         }, $users);
     }
+
+    public function sendStatusNotification():void
+    {
+
+
+    }
 }

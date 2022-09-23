@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Status;
+use App\Entity\Ticket;
 use App\Entity\TicketSettings;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,20 +42,32 @@ class TicketSettingsRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return TicketSettings[] Returns an array of TicketSettings objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return TicketSettings[] Returns an array of TicketSettings objects
+     */
+    public function findByTicket(array $users, ?Ticket $ticket, ?Status $status): array
+    {
+        $qb = $this->createQueryBuilder('t')
+            ->andWhere('t.owner IN (:users)')
+            ->setParameter('users', $users);
+//            ->andWhere('t.ticket = :ticket')
+//            ->setParameter('ticket', $ticket)
+//            ->andWhere('t.status = :status')
+//            ->setParameter('status', $status);
+        if ($status == null)
+        {
+            $qb->andWhere('t.ticket = :ticket')
+                ->setParameter('ticket', $ticket);
+        }
+
+        if ($ticket == null)
+        {
+            $qb->andWhere('t.status = :status')
+            ->setParameter('status', $status);
+        }
+
+        return $qb->getQuery()->getArrayResult();
+    }
 
 //    public function findOneBySomeField($value): ?TicketSettings
 //    {
