@@ -23,7 +23,7 @@ final class Version20220919111245 extends AbstractMigration
         $this->addSql('CREATE TABLE status (id UUID NOT NULL, ticket_status VARCHAR(255) NOT NULL, ticket_order INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_7B00651C1420FD7 ON status (ticket_status)');
         $this->addSql('COMMENT ON COLUMN status.id IS \'(DC2Type:uuid)\'');
-        $this->addSql('CREATE TABLE ticket_settings (id UUID NOT NULL, status_id UUID DEFAULT NULL, owner_id UUID NOT NULL, ticket_id UUID DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE ticket_settings (id UUID NOT NULL, status_id UUID NOT NULL, owner_id UUID NOT NULL, ticket_id UUID DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_602C5C446BF700BD ON ticket_settings (status_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_602C5C447E3C61F9 ON ticket_settings (owner_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_602C5C44700047D2 ON ticket_settings (ticket_id)');

@@ -38,6 +38,7 @@ class TicketSettingsFixtures extends Fixture implements DependentFixtureInterfac
                  */
                 $status = $this->getReference(StatusFixtures::STATUS_REFERENCE.'_'.$j);
                 $ticketSettings->addStatus($status);
+                $status->addTicketSettings($ticketSettings);
 
 
                 $manager->persist($ticketSettings);

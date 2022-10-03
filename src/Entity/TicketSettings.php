@@ -10,8 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TicketSettingsRepository::class)]
+
+
 class TicketSettings
 {
+
+
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -143,6 +147,7 @@ class TicketSettings
     public function removeStatus(Status $status): self
     {
         $this->status->removeElement($status);
+
 
         return $this;
     }
