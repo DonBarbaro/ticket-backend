@@ -30,7 +30,6 @@ class TicketSettingsFixtures extends Fixture implements DependentFixtureInterfac
             for($j = 0; $j < StatusFixtures::STATUS_COUNT; $j++) {
                 $ticketSettings = new TicketSettings();
 
-
                 $ticketSettings->addOwner($owner);
 
                 /**
@@ -39,7 +38,8 @@ class TicketSettingsFixtures extends Fixture implements DependentFixtureInterfac
                 $status = $this->getReference(StatusFixtures::STATUS_REFERENCE.'_'.$j);
                 $ticketSettings->addStatus($status);
                 $status->addTicketSettings($ticketSettings);
-
+                $ticketSettings->setTelegram($this->randomNotificationSetter());
+                $ticketSettings->setEmail($this->randomNotificationSetter());
 
                 $manager->persist($ticketSettings);
             }
@@ -47,4 +47,8 @@ class TicketSettingsFixtures extends Fixture implements DependentFixtureInterfac
         $manager->flush();
     }
 
+    public function randomNotificationSetter(): bool
+    {
+        return random_int(0,1) == 0;
+    }
 }
