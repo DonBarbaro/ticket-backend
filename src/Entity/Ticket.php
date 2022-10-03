@@ -101,12 +101,13 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $note;
 
-    #[ORM\OneToOne(mappedBy: 'ticket', cascade: ['persist', 'remove'])]
-    private TicketSettings $ticketSettings;
+    #[ORM\ManyToMany(targetEntity: TicketSettings::class, inversedBy: 'tickets')]
+    private Collection $ticketSettings;
 
     public function __construct()
     {
         $this->assign = new ArrayCollection();
+        $this->ticketSettings = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -275,24 +276,23 @@ class Ticket
         return $this;
     }
 
-    public function getTicketSettings(): ?TicketSettings
+    public function getTicketSettings(): Collection
     {
         return $this->ticketSettings;
     }
 
-    public function setTicketSettings(?TicketSettings $ticketSettings): self
+    public function addTicket(TicketSettings $ticketSettings): self
     {
-        // unset the owning side of the relation if necessary
-        if ($ticketSettings === null && $this->ticketSettings !== null) {
-            $this->ticketSettings->setTicket(null);
+        if (!$this->ticketSettings->contains($ticketSettings)) {
+            $this->ticketSettings->add($ticketSettings);
         }
 
-        // set the owning side of the relation if necessary
-        if ($ticketSettings !== null && $ticketSettings->getTicket() !== $this) {
-            $ticketSettings->setTicket($this);
-        }
+        return $this;
+    }
 
-        $this->ticketSettings = $ticketSettings;
+    public function removeTicket(TicketSettings $ticketSettings): self
+    {
+        $this->ticketSettings->removeElement($ticketSettings);
 
         return $this;
     }

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 class NewTicketSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private TelegramService $telegramService,
+       // private TelegramService $telegramService,
         private EmailService $emailService
     )
     {}
@@ -35,7 +35,7 @@ class NewTicketSubscriber implements EventSubscriberInterface
             return;
         }
         $users = $ticket->getProject()->getUsers()->toArray();
-        $this->telegramService->newTicketMessage($users);
+        //$this->telegramService->newTicketMessage($users);
         $this->emailService->newTicketMessage($users);
     }
 }
