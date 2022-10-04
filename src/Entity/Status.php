@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Enums\StatusEnum;
 use App\Repository\StatusRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -23,8 +25,13 @@ class Status
     #[ORM\Column(type: Types::INTEGER)]
     private int $ticketOrder;
 
-    #[ORM\OneToOne(mappedBy: 'status', cascade: ['persist', 'remove'])]
-    private ?TicketSettings $ticketSettings = null;
+    #[ORM\ManyToMany(targetEntity: TicketSettings::class, inversedBy: 'status')]
+    private Collection $ticketSettings;
+
+    public function __construct()
+    {
+        $this->ticketSettings = new ArrayCollection();
+    }
 
     public function getId(): ?Uuid
     {
@@ -57,19 +64,23 @@ class Status
         return $this;
     }
 
-    public function getTicketSettings(): ?TicketSettings
+    public function getTicketSettings(): Collection
     {
         return $this->ticketSettings;
     }
 
-    public function setTicketSettings(TicketSettings $ticketSettings): self
+    public function addTicketSettings(TicketSettings $ticketSettings): self
     {
-        // set the owning side of the relation if necessary
-        if ($ticketSettings->getStatus() !== $this) {
-            $ticketSettings->setStatus($this);
+        if (!$this->ticketSettings->contains($ticketSettings)) {
+            $this->ticketSettings->add($ticketSettings);
         }
 
-        $this->ticketSettings = $ticketSettings;
+        return $this;
+    }
+
+    public function removeTicketSettings(TicketSettings $ticketSettings): self
+    {
+        $this->ticketSettings->removeElement($ticketSettings);
 
         return $this;
     }

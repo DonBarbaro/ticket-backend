@@ -13,10 +13,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -77,9 +77,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     //toto som opravil 1
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
+    #[JoinTable(name: "user_project")]
     private Collection $projects;
 
-    #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: TicketSettings::class, inversedBy: 'owners')]
     private TicketSettings $ticketSettings;
 
     public function __construct()
@@ -113,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return $this->email;
     }
 
     public function getRoles(): array
@@ -221,7 +222,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // set the owning side of the relation if necessary
         if ($ticketSettings->getOwner() !== $this) {
-            $ticketSettings->setOwner($this);
+            $ticketSettings->addOwner($this);
         }
 
         $this->ticketSettings = $ticketSettings;
