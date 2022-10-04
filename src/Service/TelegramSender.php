@@ -22,7 +22,7 @@ class TelegramSender
             ->chatId($chatId)
             ->replyMarkup((new InlineKeyboardMarkup())
                 ->inlineKeyboard([
-                    (new InlineKeyboardButton('Nový support ticket'))
+                    (new InlineKeyboardButton('Support ticket'))
                         ->url('https://google.com/'),
                 ])
             );

@@ -38,7 +38,9 @@ use Symfony\Component\Uid\Uuid;
         ],
         'get',
     ],
-    itemOperations: ['get'],
+    itemOperations: [
+        'get'
+    ],
     normalizationContext: [
         'groups' => [self::READ]
     ],

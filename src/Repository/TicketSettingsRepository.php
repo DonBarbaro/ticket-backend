@@ -66,7 +66,7 @@ class TicketSettingsRepository extends ServiceEntityRepository
             ->setParameter('status', $status);
         }
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getResult();
     }
 
 //    public function findOneBySomeField($value): ?TicketSettings
