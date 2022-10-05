@@ -76,7 +76,6 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $message;
 
-    //toto som opravil 2
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
     private Collection $assign;
@@ -89,7 +88,6 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $status;
 
-    //toto som opravil 3
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
     private Project $project;
