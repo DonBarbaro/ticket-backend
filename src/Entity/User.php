@@ -65,7 +65,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::STRING)]
     private string $password;
 
-    //toto som opravil 2
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'assign')]
     #[Groups(self::READ)]
     private Collection $tickets;
@@ -73,7 +72,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Embedded(class: NotificationSettings::class )]
     private NotificationSettings $notificationSettings;
 
-    //toto som opravil 1
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
     #[JoinTable(name: "user_project")]
     private Collection $projects;

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enums\StatusEnum;
 use App\Repository\StatusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,11 +18,17 @@ class Status
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private Uuid $id;
 
-    #[ORM\Column(type: Types::STRING , length: 255, unique: true)]
-    private string $ticketStatus;
+    #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'statuses')]
+    private Project $project;
+
+    #[ORM\Column(type: Types::STRING , length: 255)]
+    private string $label;
+
+    #[ORM\Column(type: Types::STRING , length: 255)]
+    private string $name;
 
     #[ORM\Column(type: Types::INTEGER)]
-    private int $ticketOrder;
+    private int $orderIndex;
 
     #[ORM\ManyToMany(targetEntity: TicketSettings::class, inversedBy: 'status')]
     private Collection $ticketSettings;
@@ -38,29 +43,41 @@ class Status
         return $this->id;
     }
 
-    public function getTicketStatus(): StatusEnum
+    public function getLabel(): String
     {
-        return StatusEnum::from($this->ticketStatus);
+        return $this->label;
     }
-
-    public function setTicketStatus(string|StatusEnum $ticketStatus): self
+    public function setLabel(string $label): self
     {
-        $this->ticketStatus = $ticketStatus instanceof StatusEnum?
-            $ticketStatus->value:
-            $ticketStatus
-        ;
+        $this->label = $label;
         return $this;
     }
-
-    public function getTicketOrder(): ?int
+    public function getProject(): ?Project
     {
-        return $this->ticketOrder;
+        return $this->project;
     }
 
-    public function setTicketOrder(int $ticketOrder): self
+    public function setProject(?Project $project):self
     {
-        $this->ticketOrder = $ticketOrder;
-
+        $this->project = $project;
+        return $this;
+    }
+    public function getName(): ?String
+    {
+        return $this->name;
+    }
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+    public function getOrderIndex(): ?int
+    {
+        return $this->orderIndex;
+    }
+    public function setOrderIndex(int $orderIndex): self
+    {
+        $this->orderIndex = $orderIndex;
         return $this;
     }
 
