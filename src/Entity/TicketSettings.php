@@ -50,8 +50,6 @@ class TicketSettings
         return $this->id;
     }
 
-
-
     public function getOwner(): Collection
     {
         return $this->owners;

@@ -10,14 +10,14 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 class TicketListener
 {
     public function __construct(
-        private NotificationService $settings
+        private NotificationService $notificationService
     )
     {}
 
     public function preUpdate(Ticket $ticket, PreUpdateEventArgs $eventArgs): void
     {
         if ($eventArgs->hasChangedField('status')) {
-            $this->settings->statusChangedNotification($ticket);
+            $this->notificationService->statusChangedNotification($ticket);
         }
     }
 }

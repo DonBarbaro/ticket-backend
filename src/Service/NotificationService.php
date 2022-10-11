@@ -15,8 +15,7 @@ class NotificationService
         private EntityManagerInterface $entityManager,
         private TelegramService $telegramService
     )
-    {
-    }
+    {}
 
     public function statusChangedNotification(Ticket $ticket): void
     {
@@ -29,6 +28,7 @@ class NotificationService
 
         $ticketSettings = $ticketSettingsRepo->findByTicket((array)$users, $ticket, null);
         $statusSettings = $ticketSettingsRepo->findByTicket((array)$users, null, $status);
+        $noSettings = $ticketSettingsRepo->findNoSettings((array)$users, $ticket, $status);
 
         $settings = array_merge($statusSettings, $ticketSettings);
 
@@ -40,6 +40,8 @@ class NotificationService
                     $this->telegramService->sendMessage($setting, $ticket);
                 }
             }
+
+        $ticketSettingsRepo->findBy(['']);
         }
 
 }

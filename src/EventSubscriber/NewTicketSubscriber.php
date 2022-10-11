@@ -35,7 +35,6 @@ class NewTicketSubscriber implements EventSubscriberInterface
             return;
         }
         $users = $ticket->getProject()->getUsers()->toArray();
-        //$this->telegramService->newTicketMessage($users);
         $this->emailService->newTicketMessage($users);
     }
 }

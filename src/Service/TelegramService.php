@@ -26,18 +26,8 @@ class TelegramService
         }, $users);
     }
 
-    public function getMessageByStatus(Ticket $ticket): string
-    {
-        return match ($ticket->getStatus()->value) {
-            StatusEnum::Progress->value => 'Ticket '.$ticket->getId().' je v procese spracovania',
-            StatusEnum::WaitingForReply->value => 'Ticket '.$ticket->getId().' caka na overenie',
-            StatusEnum::Solved->value => 'Ticket '.$ticket->getId().' bol uspesne vyrieseny',
-            StatusEnum::New->value => 'Ticket '.$ticket->getId().' bol pridany',
-        };
-    }
-
     public function sendMessage(TicketSettings $settings, Ticket $ticket): void
     {
-        $this->telegramSender->sendMessage($settings->getOwner()->getNotificationSettings()->getTelegramId(), $this->getMessageByStatus($ticket));
+        $this->telegramSender->sendMessage('', 'Ticket zmenil stav');
     }
 }
