@@ -25,8 +25,10 @@ class TelegramService
         }, $users);
     }
 
-    public function sendMessage(TicketSettings $settings, Ticket $ticket): void
+
+    //TODO toto treba dorobit tu som prestal
+    public function sendMessage(int $telegramId, Ticket $ticket): void
     {
-        $this->telegramSender->sendMessage('5336884988', 'Ticket zmenil stav');
+        $this->telegramSender->sendMessage($telegramId, 'Ticket zmenil stav');
     }
 }

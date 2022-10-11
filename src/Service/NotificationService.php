@@ -44,12 +44,12 @@ class NotificationService
 
         if (empty($settings))
         {
-            $defaultUsersSettings = $this->entityManager->getRepository(User::class)->findBy($settings);
-            foreach ($defaultUsersSettings as $user)
+            foreach ($ticket->getProject()->getUsers()->toArray() as $user)
             {
                 if ($user->getNotificationSettings()->isTelegramVerified())
                 {
-                    $this->telegramSender->sendMessage($user->getNotificationSettings()->getTelegramId(), 'Ahoj');
+                    $this->telegramSender->sendMessage($user->getNotificationSettings()->getTelegramId(),
+                        'Ticket '.$ticket->getId().' zmenil svoj stav na '.$ticket->getStatus()->value);
                 }
             }
         }
