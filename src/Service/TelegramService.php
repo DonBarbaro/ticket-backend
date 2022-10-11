@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\Ticket;
 use App\Entity\TicketSettings;
 use App\Entity\User;
-use App\Enums\StatusEnum;
 
 class TelegramService
 {
@@ -28,6 +27,6 @@ class TelegramService
 
     public function sendMessage(TicketSettings $settings, Ticket $ticket): void
     {
-        $this->telegramSender->sendMessage('', 'Ticket zmenil stav');
+        $this->telegramSender->sendMessage('5336884988', 'Ticket zmenil stav');
     }
 }

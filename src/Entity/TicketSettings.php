@@ -14,8 +14,6 @@ use Symfony\Component\Uid\Uuid;
 
 class TicketSettings
 {
-
-
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]

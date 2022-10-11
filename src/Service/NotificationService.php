@@ -13,7 +13,8 @@ class NotificationService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TelegramService $telegramService
+        private TelegramService $telegramService,
+        private TelegramSender $telegramSender
     )
     {}
 
@@ -28,7 +29,7 @@ class NotificationService
 
         $ticketSettings = $ticketSettingsRepo->findByTicket((array)$users, $ticket, null);
         $statusSettings = $ticketSettingsRepo->findByTicket((array)$users, null, $status);
-        $noSettings = $ticketSettingsRepo->findNoSettings((array)$users, $ticket, $status);
+//        $noSettings = $ticketSettingsRepo->findNoSettings((array)$users, $ticket, $status);
 
         $settings = array_merge($statusSettings, $ticketSettings);
 
@@ -41,7 +42,18 @@ class NotificationService
                 }
             }
 
-        $ticketSettingsRepo->findBy(['']);
+        if (empty($settings))
+        {
+            $defaultUsersSettings = $this->entityManager->getRepository(User::class)->findBy($settings);
+            foreach ($defaultUsersSettings as $user)
+            {
+                if ($user->getNotificationSettings()->isTelegramVerified())
+                {
+                    $this->telegramSender->sendMessage($user->getNotificationSettings()->getTelegramId(), 'Ahoj');
+                }
+            }
         }
+
+    }
 
 }
