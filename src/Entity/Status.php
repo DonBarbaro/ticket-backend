@@ -30,7 +30,7 @@ class Status
     #[ORM\Column(type: Types::INTEGER)]
     private int $orderIndex;
 
-    #[ORM\ManyToMany(targetEntity: TicketSettings::class, inversedBy: 'status')]
+    #[ORM\ManyToOne(targetEntity: TicketSettings::class, inversedBy: 'status')]
     private Collection $ticketSettings;
 
     public function __construct()

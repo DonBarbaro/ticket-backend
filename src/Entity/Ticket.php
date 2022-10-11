@@ -99,7 +99,7 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $note;
 
-    #[ORM\ManyToMany(targetEntity: TicketSettings::class, inversedBy: 'tickets')]
+    #[ORM\ManyToOne(targetEntity: TicketSettings::class, inversedBy: 'tickets')]
     private Collection $ticketSettings;
 
     public function __construct()
