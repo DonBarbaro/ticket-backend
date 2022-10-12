@@ -67,7 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::STRING)]
     private string $password;
 
-    //toto som opravil 2
     #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy: 'assign')]
     #[Groups(self::READ)]
     private Collection $tickets;
@@ -75,19 +74,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Embedded(class: NotificationSettings::class )]
     private NotificationSettings $notificationSettings;
 
-    //toto som opravil 1
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
     #[JoinTable(name: "user_project")]
     private Collection $projects;
 
-    #[ORM\ManyToOne(targetEntity: TicketSettings::class, inversedBy: 'owners')]
-    private TicketSettings $ticketSettings;
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: TicketSettings::class)]
+    private Collection $ticketSettings;
 
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->roles = [];
         $this->projects = new ArrayCollection();
+        $this->ticketSettings = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -226,6 +225,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->ticketSettings = $ticketSettings;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TicketSettings>
+     */
+    public function getTest1(): Collection
+    {
+        return $this->test1;
+    }
+
+    public function addTest1(TicketSettings $test1): self
+    {
+        if (!$this->test1->contains($test1)) {
+            $this->test1->add($test1);
+            $test1->setUser1($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTest1(TicketSettings $test1): self
+    {
+        if ($this->test1->removeElement($test1)) {
+            // set the owning side to null (unless already changed)
+            if ($test1->getUser1() === $this) {
+                $test1->setUser1(null);
+            }
+        }
 
         return $this;
     }

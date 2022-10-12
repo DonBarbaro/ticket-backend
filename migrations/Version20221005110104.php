@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20221003101938 extends AbstractMigration
+final class Version20221005110104 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -52,17 +52,12 @@ final class Version20221003101938 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE status_ticket_settings DROP CONSTRAINT FK_70766EB16BF700BD');
         $this->addSql('ALTER TABLE status_ticket_settings DROP CONSTRAINT FK_70766EB135049EF7');
         $this->addSql('ALTER TABLE ticket_ticket_settings DROP CONSTRAINT FK_62B83755700047D2');
         $this->addSql('ALTER TABLE ticket_ticket_settings DROP CONSTRAINT FK_62B8375535049EF7');
         $this->addSql('DROP TABLE status_ticket_settings');
         $this->addSql('DROP TABLE ticket_ticket_settings');
-        $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D64935049EF7');
-        $this->addSql('DROP INDEX IDX_8D93D64935049EF7');
-        $this->addSql('DROP INDEX "primary"');
-        $this->addSql('ALTER TABLE "user" DROP ticket_settings_id');
         $this->addSql('ALTER TABLE ticket_settings ADD status_id UUID NOT NULL');
         $this->addSql('ALTER TABLE ticket_settings ADD owner_id UUID NOT NULL');
         $this->addSql('ALTER TABLE ticket_settings ADD ticket_id UUID DEFAULT NULL');
@@ -75,5 +70,9 @@ final class Version20221003101938 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX uniq_602c5c446bf700bd ON ticket_settings (status_id)');
         $this->addSql('CREATE UNIQUE INDEX uniq_602c5c447e3c61f9 ON ticket_settings (owner_id)');
         $this->addSql('CREATE UNIQUE INDEX uniq_602c5c44700047d2 ON ticket_settings (ticket_id)');
+        $this->addSql('ALTER TABLE "user" DROP CONSTRAINT FK_8D93D64935049EF7');
+        $this->addSql('DROP INDEX IDX_8D93D64935049EF7');
+        $this->addSql('DROP INDEX "primary"');
+        $this->addSql('ALTER TABLE "user" DROP ticket_settings_id');
     }
 }

@@ -48,6 +48,9 @@ class Project
     #[Groups([self::PROJECT_WRITE, self::PROJECT_READ])]
     private string $name;
 
+    #[ORM\OneToMany(mappedBy: 'project', targetEntity: Status::class)]
+    private Collection $statuses;
+
     #[ORM\Column(type: Types::STRING, length: 255)]
     #[Groups(self::PROJECT_READ)]
     private string $projectToken;
@@ -64,6 +67,7 @@ class Project
     {
         $this->tickets = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->statuses = new ArrayCollection();
         $this->projectToken = rtrim(strtr(base64_encode(random_bytes(50)), '+/', '-_'), '=');
     }
 
@@ -141,6 +145,28 @@ class Project
     {
         if ($this->users->removeElement($users)) {
             $users->removeProject($this);
+        }
+        return $this;
+    }
+
+    public function getStatuses(): Collection
+    {
+        return $this->statuses;
+    }
+    public function addStatuses(Status $status): self
+    {
+        if ($this->statuses->contains($status)) {
+            $this->statuses->add($status);
+            $status->setProject($this);
+        }
+        return $this;
+    }
+    public function removeStatuses(Status $status): self
+    {
+        if ($this->statuses->removeElement($status)) {
+            if ($status->getProject() === $this){
+                $status->setProject(null);
+            }
         }
         return $this;
     }
