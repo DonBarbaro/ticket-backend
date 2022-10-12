@@ -14,8 +14,6 @@ use Symfony\Component\Uid\Uuid;
 
 class TicketSettings
 {
-
-
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -40,27 +38,6 @@ class TicketSettings
     public function getId(): ?Uuid
     {
         return $this->id;
-    }
-
-    public function getOwner(): Collection
-    {
-        return $this->owners;
-    }
-
-    public function addOwner(User $user): self
-    {
-        if (!$this->owners->contains($user)) {
-            $this->owners->add($user);
-        }
-
-        return $this;
-    }
-
-    public function removeOwner(User $owner): self
-    {
-        $this->owners->removeElement($owner);
-
-        return $this;
     }
 
     public function getTicket(): ?Ticket
