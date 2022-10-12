@@ -3,13 +3,14 @@
 namespace App\DataFixtures;
 
 use App\Entity\Project;
+use App\Entity\Status;
 use App\Entity\Ticket;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class UserTicketFixture extends Fixture implements DependentFixtureInterface
+class TicketFixture extends Fixture implements DependentFixtureInterface
 {
 
     public const TICKET_REFERENCE = 'ticket';
@@ -31,7 +32,7 @@ class UserTicketFixture extends Fixture implements DependentFixtureInterface
                 $ticket->setProblemType($this->randomProblemType());
                 $ticket->setMessage("SomeRandomTextForMessage".(self::TICKET_COUNT*$i + $j));
                 $ticket->setSource($this->randomSource());
-                $ticket->setStatus($this->randomStatus());
+                $ticket->setStatus($this->getReference(StatusFixtures::STATUS_REFERENCE.'_0'));
 
                 /**
                  * @var Project $project
@@ -74,7 +75,8 @@ class UserTicketFixture extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            UsersFixtures::class
+            UsersFixtures::class,
+            StatusFixtures::class
         ];
     }
 }

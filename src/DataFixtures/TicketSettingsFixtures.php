@@ -15,7 +15,7 @@ class TicketSettingsFixtures extends Fixture implements DependentFixtureInterfac
     public function getDependencies()
     {
         return [
-            UserTicketFixture::class
+            TicketFixture::class
         ];
     }
 

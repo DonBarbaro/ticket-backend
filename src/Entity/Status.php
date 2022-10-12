@@ -27,8 +27,12 @@ class Status
     #[ORM\Column(type: Types::STRING , length: 255)]
     private string $name;
 
+    #[ORM\OneToMany(mappedBy: 'status', targetEntity: Ticket::class)]
+    private Collection $tickets;
+
     #[ORM\Column(type: Types::INTEGER)]
     private int $orderIndex;
+
 
     #[ORM\OneToMany(mappedBy: 'status', targetEntity: TicketSettings::class)]
     private Collection $ticketSettings;
@@ -52,6 +56,28 @@ class Status
         $this->label = $label;
         return $this;
     }
+
+    public function getTickets(): Collection
+    {
+        return $this->tickets;
+    }
+
+    public function addTicket(Ticket $ticket): self
+    {
+        if (!$this->tickets->contains($ticket)) {
+            $this->tickets->add($ticket);
+        }
+
+        return $this;
+    }
+
+    public function removeTicket(Ticket $ticket): self
+    {
+        $this->tickets->removeElement($ticket);
+
+        return $this;
+    }
+
     public function getProject(): ?Project
     {
         return $this->project;

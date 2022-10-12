@@ -84,9 +84,9 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $source;
 
-    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[ORM\ManyToOne(targetEntity: Status::class, inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
-    private string $status;
+    private Status $status;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
@@ -223,17 +223,15 @@ class Ticket
         return $this;
     }
 
-    public function getStatus(): StatusEnum
+
+    public function getStatus(): Status
     {
-        return StatusEnum::from($this->status);
+        return $this->status;
     }
 
-    public function setStatus(string|StatusEnum $status): self
+    public function setStatus(Status $status): Ticket
     {
-        $this->status = $status instanceof SourceEnum?
-            $status->value:
-            $status
-        ;
+        $this->status = $status;
         return $this;
     }
 
