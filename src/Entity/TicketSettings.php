@@ -14,34 +14,28 @@ use Symfony\Component\Uid\Uuid;
 
 class TicketSettings
 {
+
+
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private Uuid $id;
 
-    #[ORM\ManyToMany(targetEntity: Status::class, mappedBy: 'ticketSettings')]
-    private Collection $status;
+    #[ORM\ManyToOne(targetEntity: Status::class, inversedBy: 'ticketSettings')]
+    private Status $status;
 
-    #[ORM\OneToMany(mappedBy: 'ticketSettings', targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private Collection $owners;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ticketSettings')]
+    private User $owner;
 
-    #[ORM\ManyToMany(targetEntity: Ticket::class, mappedBy:  'ticketSettings')]
-    private Collection $tickets;
+    #[ORM\ManyToOne(targetEntity: Ticket::class, inversedBy: 'ticketSettings')]
+    private Ticket $ticket;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private bool $email;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
     private bool $telegram;
-
-    public function __construct()
-    {
-        $this->tickets = new ArrayCollection();
-        $this->status = new ArrayCollection();
-        $this->owners = new ArrayCollection();
-    }
 
     public function getId(): ?Uuid
     {
@@ -81,6 +75,28 @@ class TicketSettings
         return $this;
     }
 
+    public function getStatus(): Status
+    {
+        return $this->status;
+    }
+
+    public function setStatus(Status $status): TicketSettings
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getOwner(): User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(User $owner): TicketSettings
+    {
+        $this->owner = $owner;
+        return $this;
+    }
+
     public function isEmail(): ?bool
     {
         return $this->email;
@@ -105,46 +121,6 @@ class TicketSettings
         return $this;
     }
 
-    public function getTickets(): Collection
-    {
-        return $this->tickets;
-    }
-
-    public function addTicket(Ticket $ticket): self
-    {
-        if (!$this->tickets->contains($ticket)) {
-            $this->tickets->add($ticket);
-        }
-
-        return $this;
-    }
-
-    public function removeTicket(Ticket $ticket): self
-    {
-        $this->tickets->removeElement($ticket);
-
-        return $this;
-    }
-
-    public function getStatus(): Collection
-    {
-        return $this->status;
-    }
-
-    public function addStatus(Status $status): self
-    {
-        if (!$this->status->contains($status)) {
-            $this->status->add($status);
-        }
-
-        return $this;
-    }
-
-    public function removeStatus(Status $status): self
-    {
-        $this->status->removeElement($status);
 
 
-        return $this;
-    }
 }

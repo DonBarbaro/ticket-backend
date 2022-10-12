@@ -2,13 +2,14 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Project;
 use App\Entity\Status;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class StatusFixtures extends Fixture
+class StatusFixtures extends Fixture implements DependentFixtureInterface
 {
-
     public const STATUS_REFERENCE = 'status';
     public const STATUS_COUNT = 3;
 
@@ -16,22 +17,38 @@ class StatusFixtures extends Fixture
     {
         for($i = 0; $i < self::STATUS_COUNT; $i++) {
             $status = new Status();
+
+            /**
+             *@var Project $project
+             */
+            $project = $this->getReference(ProjectFixtures::PROJECT_REFERENCE.'_'.random_int(0, (ProjectFixtures::PROJECT_COUNT - 1)));
+            $status->setProject($project);
             switch ($i) {
                 case 0:
-                    $status->setTicketStatus("New");
+                    $status->setName("New");
+                    $status->setLabel("new");
                     break;
                 case 1:
-                    $status->setTicketStatus("Progress");
+                    $status->setName("Progress");
+                    $status->setLabel("progress");
                     break;
                 default:
-                    $status->setTicketStatus("Solved");
+                    $status->setName("Solved");
+                    $status->setLabel("solved");
                     break;
             }
-            $status->setTicketOrder($i);
+            $status->setOrderIndex($i);
             $this->addReference(self::STATUS_REFERENCE.'_'.$i,$status);
 
             $manager->persist($status);
         }
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [
+            ProjectFixtures::class,
+        ];
     }
 }

@@ -30,14 +30,7 @@ class TicketSettingsFixtures extends Fixture implements DependentFixtureInterfac
             for($j = 0; $j < StatusFixtures::STATUS_COUNT; $j++) {
                 $ticketSettings = new TicketSettings();
 
-                $ticketSettings->addOwner($owner);
-
-                /**
-                 * @var Status $status
-                 */
-                $status = $this->getReference(StatusFixtures::STATUS_REFERENCE.'_'.$j);
-                $ticketSettings->addStatus($status);
-                $status->addTicketSettings($ticketSettings);
+                $ticketSettings->setOwner($owner);
                 $ticketSettings->setTelegram($this->randomNotificationSetter());
                 $ticketSettings->setEmail($this->randomNotificationSetter());
 
