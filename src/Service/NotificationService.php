@@ -24,7 +24,7 @@ class NotificationService
          * @var User $users
          */
         $users = $ticket->getAssign()->toArray();
-        $status = $this->entityManager->getRepository(Status::class)->findOneBy(['ticketStatus'=>$ticket->getStatus()]);
+        $status = $this->entityManager->getRepository(Status::class)->findOneBy(['label'=>$ticket->getStatus()]);
         $ticketSettingsRepo = $this->entityManager->getRepository(TicketSettings::class);
 
         $ticketSettings = $ticketSettingsRepo->findByTicket((array)$users, $ticket, null);

@@ -99,7 +99,7 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $note;
 
-    #[ORM\OneToMany(mappedBy: 'tickets', targetEntity: TicketSettings::class)]
+    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TicketSettings::class)]
     private Collection $ticketSettings;
 
     public function __construct()
