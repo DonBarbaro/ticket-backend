@@ -88,6 +88,7 @@ class Status
         $this->project = $project;
         return $this;
     }
+
     public function getName(): ?String
     {
         return $this->name;

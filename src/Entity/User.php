@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(self::READ)]
     private Collection $tickets;
 
-    #[ORM\Embedded(class: NotificationSettings::class )]
+    #[ORM\Embedded(class: NotificationSettings::class)]
     private NotificationSettings $notificationSettings;
 
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'users')]
@@ -79,12 +79,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: TicketSettings::class)]
     private Collection $ticketSettings;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->tickets = new ArrayCollection();
         $this->roles = [];
         $this->projects = new ArrayCollection();
         $this->ticketSettings = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getEmail(): string
@@ -227,32 +231,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, TicketSettings>
-     */
-    public function getTest1(): Collection
+    public function getComments(): Collection
     {
-        return $this->test1;
+        return $this->comments;
     }
 
-    public function addTest1(TicketSettings $test1): self
+    public function addComment(Comment $comment): self
     {
-        if (!$this->test1->contains($test1)) {
-            $this->test1->add($test1);
-            $test1->setUser1($this);
+        if (!$this->comments->contains($comment)){
+            $this->comments->add($comment);
         }
 
         return $this;
     }
 
-    public function removeTest1(TicketSettings $test1): self
+    public function removeComment(Comment $comment): self
     {
-        if ($this->test1->removeElement($test1)) {
-            // set the owning side to null (unless already changed)
-            if ($test1->getUser1() === $this) {
-                $test1->setUser1(null);
-            }
-        }
+        $this->comments->removeElement($comment);
 
         return $this;
     }

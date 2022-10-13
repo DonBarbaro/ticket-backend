@@ -102,10 +102,14 @@ class Ticket
     #[ORM\OneToMany(mappedBy: 'tickets', targetEntity: TicketSettings::class)]
     private Collection $ticketSettings;
 
+    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: Comment::class)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->assign = new ArrayCollection();
         $this->ticketSettings = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -289,6 +293,27 @@ class Ticket
     public function removeTicket(TicketSettings $ticketSettings): self
     {
         $this->ticketSettings->removeElement($ticketSettings);
+
+        return $this;
+    }
+
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if(!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        $this->comments->removeElement($comment);
 
         return $this;
     }

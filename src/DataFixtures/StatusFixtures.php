@@ -11,7 +11,7 @@ use Doctrine\Persistence\ObjectManager;
 class StatusFixtures extends Fixture implements DependentFixtureInterface
 {
     public const STATUS_REFERENCE = 'status';
-    public const STATUS_COUNT = 3;
+    public const STATUS_COUNT = 6;
 
     public function load(ObjectManager $manager)
     {
@@ -23,7 +23,7 @@ class StatusFixtures extends Fixture implements DependentFixtureInterface
              */
             $project = $this->getReference(ProjectFixtures::PROJECT_REFERENCE.'_'.random_int(0, (ProjectFixtures::PROJECT_COUNT - 1)));
             $status->setProject($project);
-            switch ($i) {
+            switch ($i % 3) {
                 case 0:
                     $status->setName("New");
                     $status->setLabel("new");
@@ -37,7 +37,7 @@ class StatusFixtures extends Fixture implements DependentFixtureInterface
                     $status->setLabel("solved");
                     break;
             }
-            $status->setOrderIndex($i);
+            $status->setOrderIndex($i % 3);
             $this->addReference(self::STATUS_REFERENCE.'_'.$i,$status);
 
             $manager->persist($status);
