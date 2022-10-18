@@ -14,7 +14,7 @@ class UserRegistrationInputDataTransformer implements DataTransformerInterface
         private UserPasswordHasherInterface $passwordHasher
     ){}
 
-    public function transform($data, string $to, array $context = [])
+    public function transform($data, string $to, array $context = []): User
     {
         $user = new User();
         $user->setEmail($data->email);

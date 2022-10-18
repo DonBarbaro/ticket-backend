@@ -27,8 +27,8 @@ class TelegramService
 
 
     //TODO toto treba dorobit tu som prestal
-    public function sendMessage(int $telegramId, Ticket $ticket): void
+    public function sendMessage(TicketSettings $settings, Ticket $ticket): void
     {
-        $this->telegramSender->sendMessage($telegramId, 'Ticket zmenil stav');
+        $this->telegramSender->sendMessage($settings->getOwner()->getNotificationSettings()->getTelegramId(), 'Ticket '.$ticket->getId().' zmenil stav na '.$ticket->getStatus()->getName());
     }
 }

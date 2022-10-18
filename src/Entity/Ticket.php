@@ -7,9 +7,9 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Api\Dto\Ticket\TicketInputDto;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
-use App\Enums\StatusEnum;
 use App\Repository\TicketRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
@@ -31,12 +32,12 @@ use Symfony\Component\Uid\Uuid;
     ],
     itemOperations: [
         'put' => [
-            'denormalization_context' => [
-                'groups' => [self::TICKET_WRITE]
-            ]
+            'method' => 'PUT',
+            'input' => TicketInputDto::class,
         ],
         'get'
     ],
+    normalizationContext: [self::TICKET_READ]
 )]
 #[ORM\HasLifecycleCallbacks]
 #[ApiFilter(SearchFilter::class, properties: ['source' => 'exact', 'status' => 'exact', 'problemType' => 'exact', 'project.id' => 'exact'])]
@@ -44,52 +45,55 @@ use Symfony\Component\Uid\Uuid;
 class Ticket
 {
     private const TICKET_WRITE = 'ticket_write';
+    private const TICKET_READ = 'ticket_read';
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
+    #[Groups(self::TICKET_READ)]
     private Uuid $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $firstName;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $lastName;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $email;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $phone;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $problemType;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $message;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
+    #[MaxDepth(1)]
     private Collection $assign;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private string $source;
 
-    #[ORM\ManyToOne(targetEntity: Status::class, inversedBy: 'tickets')]
-    #[Groups(self::TICKET_WRITE)]
+    #[ORM\ManyToOne(targetEntity: Status::class, cascade: ['persist'], inversedBy: 'tickets')]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private Status $status;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
-    #[Groups(self::TICKET_WRITE)]
+    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
     private Project $project;
 
     #[ORM\Column(type: 'datetime')]
@@ -100,6 +104,7 @@ class Ticket
     private string $note;
 
     #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TicketSettings::class)]
+    #[MaxDepth(1)]
     private Collection $ticketSettings;
 
     public function __construct()
@@ -223,7 +228,6 @@ class Ticket
         return $this;
     }
 
-
     public function getStatus(): Status
     {
         return $this->status;
@@ -231,6 +235,8 @@ class Ticket
 
     public function setStatus(Status $status): Ticket
     {
+//        $this->status->removeTicket($this);
+//        $status->addTicket($this);
         $this->status = $status;
         return $this;
     }

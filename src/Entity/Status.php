@@ -2,14 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StatusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StatusRepository::class)]
+#[ApiResource()]
 class Status
 {
     #[ORM\Id]
@@ -28,13 +31,14 @@ class Status
     private string $name;
 
     #[ORM\OneToMany(mappedBy: 'status', targetEntity: Ticket::class)]
+    #[MaxDepth(1)]
     private Collection $tickets;
 
     #[ORM\Column(type: Types::INTEGER)]
     private int $orderIndex;
 
-
     #[ORM\OneToMany(mappedBy: 'status', targetEntity: TicketSettings::class)]
+    #[MaxDepth(1)]
     private Collection $ticketSettings;
 
     public function __construct()

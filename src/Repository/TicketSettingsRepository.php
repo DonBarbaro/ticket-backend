@@ -50,21 +50,19 @@ class TicketSettingsRepository extends ServiceEntityRepository
     public function findByTicket(array $users, ?Ticket $ticket, ?Status $status): array
     {
         $qb = $this->createQueryBuilder('ts')
-            ->leftJoin('ts.owners', 'o')
+            ->leftJoin('ts.owner', 'o')
             ->andWhere('o IN (:user)')
             ->setParameter(':user', array_map(function (User $user) {
                 return $user->getId();
             }, $users), Connection::PARAM_STR_ARRAY);
 
         if ($ticket) {
-            $qb->leftJoin('ts.tickets', 't')
-                ->andWhere('t = :ticket')
+            $qb->andWhere('ts.ticket = :ticket')
                 ->setParameter('ticket', $ticket);
         }
 
         if ($status) {
-            $qb->leftJoin('ts.status', 's')
-                ->andWhere('s = :status')
+            $qb->andWhere('ts.status = :status')
                 ->setParameter('status', $status);
         }
 

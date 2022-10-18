@@ -24,11 +24,10 @@ class NotificationService
          * @var User $users
          */
         $users = $ticket->getAssign()->toArray();
-        $status = $this->entityManager->getRepository(Status::class)->findOneBy(['label'=>$ticket->getStatus()]);
         $ticketSettingsRepo = $this->entityManager->getRepository(TicketSettings::class);
 
         $ticketSettings = $ticketSettingsRepo->findByTicket((array)$users, $ticket, null);
-        $statusSettings = $ticketSettingsRepo->findByTicket((array)$users, null, $status);
+        $statusSettings = $ticketSettingsRepo->findByTicket((array)$users, null, $ticket->getStatus());
 //        $noSettings = $ticketSettingsRepo->findNoSettings((array)$users, $ticket, $status);
 
         $settings = array_merge($statusSettings, $ticketSettings);
@@ -49,7 +48,7 @@ class NotificationService
                 if ($user->getNotificationSettings()->isTelegramVerified())
                 {
                     $this->telegramSender->sendMessage($user->getNotificationSettings()->getTelegramId(),
-                        'Ticket '.$ticket->getId().' zmenil svoj stav na '.$ticket->getStatus()->value);
+                        'Ticket '.$ticket->getId().' zmenil svoj stav na '.$ticket->getStatus()->getName());
                 }
             }
         }

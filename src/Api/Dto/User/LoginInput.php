@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Dto\User;
+namespace App\Api\Dto\User;
 
-
-use Symfony\Component\Serializer\Annotation\Groups;
 
 class LoginInput
 {
