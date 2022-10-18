@@ -3,40 +3,42 @@
 namespace App\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
-use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use App\Api\Dto\Ticket\TicketInputDto;
 use App\Entity\Ticket;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 class TicketInputDataTransformer implements DataTransformerInterface
 {
+    /**
+     * @param TicketInputDto $object
+     */
     public function transform($object, string $to, array $context = []): Ticket
     {
         /**
          * @var Ticket $ticket
          */
-
         $ticket = $context[AbstractNormalizer::OBJECT_TO_POPULATE];
-//        $ticket->setFirstName($object->firstName);
-//        $ticket->setLastName($object->lastName);
-//        $ticket->setEmail($object->email);
-//        $ticket->setPhone($object->phone);
-//        $ticket->setProblemType($object->problemType);
-//        $ticket->setMessage($object->message);
-//        $ticket->setSource($object->source);
-        $ticket->setStatus($object->status);
-//        $ticket->setProject($object->project);
-//        $ticket->setNote($object->note);
+        $object->firstName == null ? : $ticket->setFirstName($object->firstName);
+        $object->lastName == null ? : $ticket->setLastName($object->lastName);
+        $object->email == null ? : $ticket->setEmail($object->email);
+        $object->phone == null ? : $ticket->setPhone($object->phone);
+        $object->problemType == null ? : $ticket->setProblemType($object->problemType);
+        $object->message == null ? : $ticket->setMessage($object->message);
+        $object->source == null ? : $ticket->setSource($object->source);
+        $object->status == null ? : $ticket->setStatus($object->status);
+        $object->project == null ? : $ticket->setProject($object->project);
+        $object->note == null ? : $ticket->setNote($object->note);
 
         return $ticket;
     }
 
     public function supportsTransformation($data, string $to, array $context = []): bool
     {
-        if ($data instanceof Ticket)
-        {
+        if ($data instanceof Ticket) {
             return false;
         }
         return Ticket::class === $to && null !== ($context['input']['class'] ?? null);
     }
+
+
 }
