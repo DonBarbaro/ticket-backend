@@ -109,11 +109,12 @@ class Ticket
 
     public function __construct()
     {
+        $this->id = uuid::v4();
         $this->assign = new ArrayCollection();
         $this->ticketSettings = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
