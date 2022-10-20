@@ -84,12 +84,12 @@ class Ticket
     #[MaxDepth(1)]
     private Collection $assign;
 
-    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
-    private string $source;
+    private ?string $source = null;
 
     #[ORM\ManyToOne(targetEntity: Status::class, cascade: ['persist'], inversedBy: 'tickets')]
-    #[Groups([self::TICKET_WRITE, self::TICKET_READ])]
+    #[Groups(self::TICKET_READ)]
     private Status $status;
 
     #[ORM\ManyToOne(inversedBy: 'tickets')]
@@ -99,7 +99,7 @@ class Ticket
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     #[Groups(self::TICKET_WRITE)]
     private string $note;
 
@@ -236,8 +236,6 @@ class Ticket
 
     public function setStatus(Status $status): Ticket
     {
-//        $this->status->removeTicket($this);
-//        $status->addTicket($this);
         $this->status = $status;
         return $this;
     }
