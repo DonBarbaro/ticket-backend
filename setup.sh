@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run composer install in api folder
-docker-compose exec php bash -c "cd api && composer i --no-scripts"
+docker-compose exec php bash -c "composer i --no-scripts"
 docker-compose exec php php bin/console cache:clear --no-warmup
 
 #lexik jwt keys
