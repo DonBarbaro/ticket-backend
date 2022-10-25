@@ -3,10 +3,9 @@
 namespace App\Api\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use App\Entity\Status;
 use App\Entity\Ticket;
-use Doctrine\ORM\EntityManager;
+use App\Enums\SourceEnum;
 use Doctrine\Persistence\ManagerRegistry;
 
 class NewTicketDataPersister implements ContextAwareDataPersisterInterface
@@ -37,7 +36,9 @@ class NewTicketDataPersister implements ContextAwareDataPersisterInterface
                 function (Status $status){
                     return $status->getOrderIndex() === 0;
                 })[0];
-//            $source = $data->getSource()
+            //TODO treba domysliet logiku pri vytvarani ticketu zo supportu, teraz je default CLIENT
+            //if ()
+            $data->setSource(SourceEnum::Client);
             $data->setStatus($firstStatus);
             $em->persist($data);
             $em->flush();
@@ -48,6 +49,6 @@ class NewTicketDataPersister implements ContextAwareDataPersisterInterface
 
     public function remove($data, array $context = [])
     {
-
+        return $this->decorated->remove($data, $context);
     }
 }
