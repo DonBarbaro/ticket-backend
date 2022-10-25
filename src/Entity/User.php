@@ -5,8 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Dto\User\LoginInput;
-use App\Dto\User\RegistrationInput;
+use App\Api\Dto\User\LoginInput;
+use App\Api\Dto\User\RegistrationInput;
 use App\Entity\Embeddable\NotificationSettings;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -38,7 +38,9 @@ use Symfony\Component\Uid\Uuid;
         ],
         'get',
     ],
-    itemOperations: ['get'],
+    itemOperations: [
+        'get'
+    ],
     normalizationContext: [
         'groups' => [self::READ]
     ],
@@ -210,51 +212,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTicketSettings(): ?TicketSettings
+    public function getTicketSettings(): Collection
     {
         return $this->ticketSettings;
     }
 
-    public function setTicketSettings(TicketSettings $ticketSettings): self
+    public function addTicketSettings(TicketSettings $ticketSettings): self
     {
-        // set the owning side of the relation if necessary
-        if ($ticketSettings->getOwner() !== $this) {
-            $ticketSettings->addOwner($this);
-        }
-
-        $this->ticketSettings = $ticketSettings;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, TicketSettings>
-     */
-    public function getTest1(): Collection
-    {
-        return $this->test1;
-    }
-
-    public function addTest1(TicketSettings $test1): self
-    {
-        if (!$this->test1->contains($test1)) {
-            $this->test1->add($test1);
-            $test1->setUser1($this);
+        if (!$this->ticketSettings->contains($ticketSettings)) {
+            $this->ticketSettings->add($ticketSettings);
         }
 
         return $this;
     }
 
-    public function removeTest1(TicketSettings $test1): self
+    public function removeTicketSettings(TicketSettings $ticketSettings): self
     {
-        if ($this->test1->removeElement($test1)) {
-            // set the owning side to null (unless already changed)
-            if ($test1->getUser1() === $this) {
-                $test1->setUser1(null);
-            }
-        }
+        $this->ticketSettings->removeElement($ticketSettings);
 
         return $this;
     }
-
 }

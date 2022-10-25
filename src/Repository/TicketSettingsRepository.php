@@ -2,8 +2,13 @@
 
 namespace App\Repository;
 
+use App\Entity\Status;
+use App\Entity\Ticket;
 use App\Entity\TicketSettings;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +44,38 @@ class TicketSettingsRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return TicketSettings[] Returns an array of TicketSettings objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return TicketSettings[] Returns an array of TicketSettings objects
+     */
+    public function findByTicket(array $users, ?Ticket $ticket, ?Status $status): array
+    {
+        $qb = $this->createQueryBuilder('ts')
+            ->leftJoin('ts.owner', 'o')
+            ->andWhere('o IN (:user)')
+            ->setParameter(':user', array_map(function (User $user) {
+                return $user->getId();
+            }, $users), Connection::PARAM_STR_ARRAY);
 
-//    public function findOneBySomeField($value): ?TicketSettings
+        if ($ticket) {
+            $qb->andWhere('ts.ticket = :ticket')
+                ->setParameter('ticket', $ticket);
+        }
+
+        if ($status) {
+            $qb->andWhere('ts.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $qb->getQuery()->getResult();
+
+    }
+
+//    public function findNoSettings(array $users, ?Ticket $ticket, ?Status $status): ?TicketSettings
 //    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
+//        return $this->createQueryBuilder('ts')
+//            ->andWhere('ts.status || ts.ticket = :')
+//            ->setParameter('val', $ticket)
+//            ->getQuery()->getResult();
 //        ;
 //    }
 }
