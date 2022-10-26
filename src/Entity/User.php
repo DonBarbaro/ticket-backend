@@ -5,8 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Core\Action\PlaceholderAction;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Dto\User\LoginInput;
-use App\Dto\User\RegistrationInput;
+use App\Api\Dto\User\LoginInput;
+use App\Api\Dto\User\RegistrationInput;
 use App\Entity\Embeddable\NotificationSettings;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -38,7 +38,9 @@ use Symfony\Component\Uid\Uuid;
         ],
         'get',
     ],
-    itemOperations: ['get'],
+    itemOperations: [
+        'get'
+    ],
     normalizationContext: [
         'groups' => [self::READ]
     ],
@@ -210,14 +212,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTicketSettings(): ?Collection
+    public function getTicketSettings(): Collection
     {
         return $this->ticketSettings;
     }
 
     public function addTicketSettings(TicketSettings $ticketSettings): self
     {
-        // set the owning side of the relation if necessary
         if (!$this->ticketSettings->contains($ticketSettings)) {
             $this->ticketSettings->add($ticketSettings);
         }
@@ -231,5 +232,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 }
