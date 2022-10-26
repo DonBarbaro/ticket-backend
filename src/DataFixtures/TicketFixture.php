@@ -32,7 +32,12 @@ class TicketFixture extends Fixture implements DependentFixtureInterface
                 $ticket->setProblemType($this->randomProblemType());
                 $ticket->setMessage("SomeRandomTextForMessage".(self::TICKET_COUNT*$i + $j));
                 $ticket->setSource($this->randomSource());
-                $ticket->setStatus($this->getReference(StatusFixtures::STATUS_REFERENCE.'_0'));
+
+                /**
+                 * @var Status $status
+                 */
+                $status = $this->getReference(StatusFixtures::STATUS_REFERENCE.'_0');
+                $ticket->setStatus($status);
 
                 /**
                  * @var Project $project
@@ -61,14 +66,6 @@ class TicketFixture extends Fixture implements DependentFixtureInterface
         return match (random_int(0, 1)) {
             0 => "Customer",
             default => "Support",
-        };
-    }
-
-    public function randomStatus(): string{
-        return match (random_int(0, 2)) {
-            0 => "New",
-            1 => "Progress",
-            default => "Solved",
         };
     }
 

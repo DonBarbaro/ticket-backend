@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\StatusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StatusRepository::class)]
+#[ApiResource]
 class Status
 {
     #[ORM\Id]
@@ -40,6 +42,7 @@ class Status
     public function __construct()
     {
         $this->ticketSettings = new ArrayCollection();
+        $this->tickets = new ArrayCollection();
     }
 
     public function getId(): ?Uuid

@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
     #[Groups(self::READ)]
-    private array $roles = [];
+    private array $roles;
 
     #[ORM\Column(type: Types::STRING)]
     private string $password;
@@ -210,49 +210,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTicketSettings(): ?TicketSettings
+    public function getTicketSettings(): ?Collection
     {
         return $this->ticketSettings;
     }
 
-    public function setTicketSettings(TicketSettings $ticketSettings): self
+    public function addTicketSettings(TicketSettings $ticketSettings): self
     {
         // set the owning side of the relation if necessary
-        if ($ticketSettings->getOwner() !== $this) {
-            $ticketSettings->addOwner($this);
-        }
-
-        $this->ticketSettings = $ticketSettings;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, TicketSettings>
-     */
-    public function getTest1(): Collection
-    {
-        return $this->test1;
-    }
-
-    public function addTest1(TicketSettings $test1): self
-    {
-        if (!$this->test1->contains($test1)) {
-            $this->test1->add($test1);
-            $test1->setUser1($this);
+        if (!$this->ticketSettings->contains($ticketSettings)) {
+            $this->ticketSettings->add($ticketSettings);
         }
 
         return $this;
     }
 
-    public function removeTest1(TicketSettings $test1): self
+    public function removeTicketSettings(TicketSettings $ticketSettings): self
     {
-        if ($this->test1->removeElement($test1)) {
-            // set the owning side to null (unless already changed)
-            if ($test1->getUser1() === $this) {
-                $test1->setUser1(null);
-            }
-        }
+        $this->ticketSettings->removeElement($ticketSettings);
 
         return $this;
     }

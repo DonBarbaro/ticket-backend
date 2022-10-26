@@ -9,3 +9,6 @@ api_platform:
             JWT:
                 name: Authorization
                 type: header
+            privateAccess:
+                name: X-Private-Access
+                type: header

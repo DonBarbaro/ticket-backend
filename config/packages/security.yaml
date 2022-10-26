@@ -29,6 +29,7 @@ security:
             stateless: true
             provider: app_user_provider
             jwt: ~
+            custom_authenticator: App\Security\Authentication\PrivateTokenAuthenticator
 
         main:
             provider: app_user_provider

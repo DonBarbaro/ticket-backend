@@ -9,9 +9,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Enums\ProblemTypeEnum;
 use App\Enums\SourceEnum;
-use App\Enums\StatusEnum;
 use App\Repository\TicketRepository;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -88,7 +88,7 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private Status $status;
 
-    #[ORM\ManyToOne(inversedBy: 'tickets')]
+    #[ORM\ManyToOne(targetEntity: Project::class ,inversedBy: 'tickets')]
     #[Groups(self::TICKET_WRITE)]
     private Project $project;
 
@@ -99,11 +99,12 @@ class Ticket
     #[Groups(self::TICKET_WRITE)]
     private string $note;
 
-    #[ORM\OneToMany(mappedBy: 'tickets', targetEntity: TicketSettings::class)]
+    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TicketSettings::class)]
     private Collection $ticketSettings;
 
     public function __construct()
     {
+        $this->id = Uuid::v4();
         $this->assign = new ArrayCollection();
         $this->ticketSettings = new ArrayCollection();
     }
@@ -224,12 +225,12 @@ class Ticket
     }
 
 
-    public function getStatus(): Status
+    public function getStatus(): ?Status
     {
         return $this->status;
     }
 
-    public function setStatus(Status $status): Ticket
+    public function setStatus(Status $status): self
     {
         $this->status = $status;
         return $this;
@@ -247,7 +248,7 @@ class Ticket
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }

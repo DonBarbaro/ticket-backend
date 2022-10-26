@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Status;
 use App\Entity\TicketSettings;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
