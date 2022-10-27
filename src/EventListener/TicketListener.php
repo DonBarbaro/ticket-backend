@@ -16,7 +16,8 @@ class TicketListener
 
     public function preUpdate(Ticket $ticket, PreUpdateEventArgs $eventArgs): void
     {
-        if ($eventArgs->hasChangedField('status')) {
+        if ($eventArgs->hasChangedField('status') && $eventArgs->getOldValue('status') !== null)
+        {
             $this->notificationService->statusChangedNotification($ticket);
         }
     }

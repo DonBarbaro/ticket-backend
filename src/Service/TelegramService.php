@@ -20,7 +20,7 @@ class TelegramService
          */
         array_map(function (User $user) {
             if ($user->getNotificationSettings()->isTelegramVerified()) {
-                $this->telegramSender->sendMessage($user->getNotificationSettings()->getTelegramId(), 'Novy ticket');
+                $this->telegramSender->sendMessage($user->getNotificationSettings()->getTelegramId(), 'Prišiel nový ticket!');
             }
         }, $users);
     }
