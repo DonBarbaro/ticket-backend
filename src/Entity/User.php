@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Api\Dto\User\LoginInput;
 use App\Api\Dto\User\RegistrationInput;
+use App\Controller\MeController;
 use App\Entity\Embeddable\NotificationSettings;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -36,32 +37,41 @@ use Symfony\Component\Uid\Uuid;
             'security' => "is_granted('ROLE_ADMIN')",
             'security_message' => 'Only admins can register new users!',
         ],
-        'get',
+        'me' => [
+            'method' => 'GET',
+            'path' => '/auth/me',
+            'controller' => MeController::class,
+            'normalization_context' => ['groups' => self::READ_ME]
+        ],
+        'get' => [
+            'normalization_context' => ['groups' => self::READ]
+        ],
     ],
     itemOperations: [
-        'get'
-    ],
-    normalizationContext: [
-        'groups' => [self::READ]
+        'get' => [
+            'normalization_context' => ['groups' => self::READ_ME]
+        ]
     ],
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const READ = 'user:read';
+    public const READ_ME = 'user';
 
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[ApiProperty(identifier: true)]
+    #[Groups(self::READ_ME)]
     private Uuid $id;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    #[Groups(self::READ)]
+    #[Groups([self::READ, self::READ_ME])]
     private string $email;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
-    #[Groups(self::READ)]
+    #[Groups([self::READ, self::READ_ME])]
     private array $roles = [];
 
     #[ORM\Column(type: Types::STRING)]
