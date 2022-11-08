@@ -21,6 +21,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Controller\MeController:
+        tags: [controller.service_arguments]
+
     App\Service\EmailSender:
         arguments:
             $apiKey: '%env(resolve:API_KEY)%'
